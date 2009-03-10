@@ -1,0 +1,18 @@
+
+This is the directory where the generated VuzitPHP documentation resides. 
+
+--------------------------------------------------
+-- DOCUMENTATION SETUP
+--------------------------------------------------
+
+All of the HTML documentatio is stored in the doc/index.html file.  It has the 
+documented API calls.  
+
+This documentation written for NaturalDocs:
+
+  http://naturaldocs.org/
+
+If you'd like to build the documentation then run the following command from
+within the VuzitPHP root directory:
+
+  naturaldocs -p project -i lib -o HTML doc

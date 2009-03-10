@@ -1,0 +1,159 @@
+--------------------------------------------------
+-- VuzitPHP, Vuzit Web Services library for PHP
+--------------------------------------------------
+
+Copyright (c) 2009 Brent Matzelle (brent AT vuzit DOT com)
+
+Released under the MIT license: 
+
+  http://www.opensource.org/licenses/mit-license.php
+
+This means you can use it in proprietary products.
+
+
+--------------------------------------------------
+-- INTRODUCTION
+--------------------------------------------------
+
+This is a library that allows developers to directly access the Vuzit Web 
+Service API through a simple PHP script:
+
+  http://vuzit.com/developer/documents_api
+
+  
+--------------------------------------------------
+-- INITIAL SETUP
+--------------------------------------------------
+
+This application requires the PHP Client Library (libcurl):
+
+  http://php.net/curl
+  
+This link is to the installation instructions:
+
+  http://php.net/manual/en/curl.installation.php
+
+A simple phpinfo() call will tell you if CURL is installed:
+
+<?php
+phpinfo();
+?>
+  
+If you're using the Windows version then the library is an optional module.  
+Open your php.ini file and un-comment the following line:
+
+extension=php_curl.dll
+
+Then restart your web server.  Verify with the phpinfo() call that it's 
+working.  Sometimes on Windows machines the php.ini 'extension_dir' variable 
+is set to ./ which doesn't work.  You will need to give it the full path.  
+In this example the PHP installation is stored in "C:\Program Files\php":
+  
+extension_dir = "C:/Program Files/php/ext"
+
+
+--------------------------------------------------
+-- DOCUMENTATION
+--------------------------------------------------
+
+All of the HTML documentatio is stored in the doc/index.html file.  It has the 
+documented API calls.  
+
+This documentation written for NaturalDocs:
+
+  http://naturaldocs.org/
+
+If you'd like to build the documentation then run the following command from
+within the VuzitPHP root directory:
+
+  naturaldocs -p project -i lib -o HTML doc
+
+  
+--------------------------------------------------
+-- EXAMPLES
+--------------------------------------------------
+
+Upload Example:
+Below is an example that shows how include Vuzit and upload a simple file:
+
+  <?php
+  include_once "VuzitPHP/lib/vuzit.php";
+
+  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
+  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
+
+  $doc = Vuzit_Document::upload("c:/path/to/document.pdf");
+  echo "Document id: " . $doc->getId();
+  ?>
+ 
+Find Document Example:
+Below shows how to load a document.  
+
+  <?php
+  include_once "VuzitPHP/lib/vuzit.php";
+
+  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
+  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
+
+  $doc = Vuzit_Document::findById("DOCUMENT_ID");
+  echo "Document id: " . $doc->getId();
+  echo "Document title: " . $doc->getTitle();
+  ?>
+
+Delete (destroy) Document Example:
+
+  <?php
+  include_once "VuzitPHP/lib/vuzit.php";
+
+  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
+  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
+
+  $result = Vuzit_Document::destroy("DOCUMENT_ID");
+  ?>
+
+Upload and View with the JavaScript API:
+
+  <?php
+  include_once "VuzitPHP/lib/vuzit.php";
+  
+  $doc = Vuzit_Document::upload("c:/temp/test.pdf");
+  $timestamp = time();
+  $sig = Vuzit_Service::getSignature("show", $doc->getId(), $timestamp);
+  ?>
+  <html>
+    <head>
+      <link href="http://vuzit.com/stylesheets/Vuzit-2.6.css" rel="Stylesheet" type="text/css" />
+      <script src="http://vuzit.com/javascripts/Vuzit-2.6.js" type="text/javascript"></script>
+      <script type="text/javascript">
+        // Called when the page is loaded.  
+        function initialize()  {
+          vuzit.Base.PublicKeySet("<?php echo Vuzit_Service::$PublicKey; ?>"); 
+          var options = {signature: '<?php echo rawurlencode($sig); ?>', 
+                         timestamp: '<?php echo $timestamp ?>', ssl: true}
+          var viewer = vuzit.Viewer.fromId("<?php echo $doc->getId(); ?>", options);
+          
+          viewer.display(document.getElementById("vuzit_viewer"), { zoom: 1 });
+        }
+      </script>
+    </head>
+    <body onload="initialize()">
+      <div id="vuzit_viewer" style="width: 650px; height: 500px;"></div>
+    </body>
+  </html>
+
+
+--------------------------------------------------
+-- MORE INFORMATION
+--------------------------------------------------
+
+For more information, including installation see readme.htm
+or visit
+
+  http://vuzit.com/developer
+
+
+--------------------------------------------------
+-- Feature Requests and Bug Reports
+--------------------------------------------------
+
+  Email to support AT vuzit DOT com
