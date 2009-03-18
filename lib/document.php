@@ -3,6 +3,9 @@
 Class: Vuzit_Document
   Class for uploading, loading, and deleting documents using the Vuzit Web
   Service API: http://vuzit.com/developer/documents_api.  
+
+  To use this class you need to sign up for Vuzit first: 
+  http://vuzit.com/signup
 */
 class Vuzit_Document
 {
@@ -34,7 +37,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setId
     Sets the document web ID. 
   */
   public function setId($value) {
@@ -72,7 +74,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setSubject
     Sets the document subject. 
   */
   public function setSubject($value) {
@@ -91,7 +92,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setPageCount
     Sets the document page count. 
   */
   public function setPageCount($value) {
@@ -110,7 +110,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setPageWidth
     Sets the document page width. 
   */
   public function setPageWidth($value) {
@@ -129,7 +128,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setPageHeight
     Sets the document page height. 
   */
   public function setPageHeight($value) {
@@ -148,7 +146,6 @@ class Vuzit_Document
   }
 
   /*
-  Function: setFileSize
     Sets the document file size. 
   */
   public function setFileSize($value) {

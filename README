@@ -2,7 +2,7 @@
 -- VuzitPHP, Vuzit Web Services library for PHP
 --------------------------------------------------
 
-Copyright (c) 2009 Brent Matzelle (brent AT vuzit DOT com)
+Copyright (c) 2009 Brent Matzelle, Vuzit LLC 
 
 Released under the MIT license: 
 
@@ -20,6 +20,22 @@ Service API through a simple PHP script:
 
   http://vuzit.com/developer/documents_api
 
+Below is a basic upload example:
+
+  <?php  
+  include_once "VuzitPHP/lib/vuzit.php";  
+
+  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';  
+  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';  
+
+  $doc = Vuzit_Document::upload("c:/path/to/document.pdf");  
+
+  echo "Document id: " . $doc->getId();  
+  ?>
+
+To get started all you need to do is download the code, sign up for a free 
+account (https://ssl.vuzit.com/signup) and replace the public and 
+private keys with the keys from your account.
   
 --------------------------------------------------
 -- INITIAL SETUP
@@ -53,41 +69,20 @@ extension_dir = "C:/Program Files/php/ext"
 
 
 --------------------------------------------------
--- DOCUMENTATION
+-- GETTING STARTED 
 --------------------------------------------------
 
-All of the HTML documentatio is stored in the doc/index.html file.  It has the 
-documented API calls.  
+* Download the code - http://github.com/vuzit/vuzitphp/downloads
+* Sign up for a free Vuzit account - https://ssl.vuzit.com/signup
+* Code Examples - http://wiki.github.com/vuzit/vuzitphp/code-samples-2
+* Vuzit API Reference - http://doc.vuzit.com/vuzitphp
 
-This documentation written for NaturalDocs:
 
-  http://naturaldocs.org/
-
-If you'd like to build the documentation then run the following command from
-within the VuzitPHP root directory:
-
-  naturaldocs -p project -i lib -o HTML doc
-
-  
 --------------------------------------------------
 -- EXAMPLES
 --------------------------------------------------
 
-Upload Example:
-Below is an example that shows how include Vuzit and upload a simple file:
-
-  <?php
-  include_once "VuzitPHP/lib/vuzit.php";
-
-  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
-
-  $doc = Vuzit_Document::upload("c:/path/to/document.pdf");
-  echo "Document id: " . $doc->getId();
-  ?>
- 
-Find Document Example:
-Below shows how to load a document.  
+Find Document Example - how to load a document
 
   <?php
   include_once "VuzitPHP/lib/vuzit.php";
@@ -100,7 +95,7 @@ Below shows how to load a document.
   echo "Document title: " . $doc->getTitle();
   ?>
 
-Delete (destroy) Document Example:
+Delete (destroy) Document Example
 
   <?php
   include_once "VuzitPHP/lib/vuzit.php";
@@ -111,7 +106,7 @@ Delete (destroy) Document Example:
   $result = Vuzit_Document::destroy("DOCUMENT_ID");
   ?>
 
-Upload and View with the JavaScript API:
+Upload and View with the JavaScript API Example
 
   <?php
   include_once "VuzitPHP/lib/vuzit.php";
