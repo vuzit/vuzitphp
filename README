@@ -2,14 +2,6 @@
 -- VuzitPHP, Vuzit Web Services library for PHP
 --------------------------------------------------
 
-Copyright (c) 2009 Brent Matzelle, Vuzit LLC 
-
-Released under the MIT license: 
-
-  http://www.opensource.org/licenses/mit-license.php
-
-This means you can use it in proprietary products.
-
 
 --------------------------------------------------
 -- INTRODUCTION
@@ -74,7 +66,7 @@ extension_dir = "C:/Program Files/php/ext"
 
 * Download the code - http://github.com/vuzit/vuzitphp/downloads
 * Sign up for a free Vuzit account - https://ssl.vuzit.com/signup
-* Code Examples - http://wiki.github.com/vuzit/vuzitphp/code-samples-2
+* Code Examples - http://wiki.github.com/vuzit/vuzitphp/code-samples
 * Vuzit API Reference - http://doc.vuzit.com/vuzitphp
 
 
@@ -145,6 +137,19 @@ For more information, including installation see readme.htm
 or visit
 
   http://vuzit.com/developer
+
+
+--------------------------------------------------
+-- LICENSE
+--------------------------------------------------
+
+Copyright (c) 2009 Brent Matzelle, Vuzit LLC 
+
+Released under the MIT license: 
+
+  http://www.opensource.org/licenses/mit-license.php
+
+This means you can use it in proprietary products. See LICENSE file.
 
 
 --------------------------------------------------

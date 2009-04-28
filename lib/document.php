@@ -187,6 +187,8 @@ class Vuzit_Document
 
     $info = curl_getinfo($ch);
     if($info['http_code'] != 200) {
+      // TODO: You should be checking the code and message and returning
+      //       them!  
       throw new Vuzit_Exception("HTTP error " . $info['http_code']);
     }
     curl_close($ch);

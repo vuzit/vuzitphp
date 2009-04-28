@@ -36,7 +36,11 @@ class Vuzit_Service
 
   /*
   Function: getSignature
-    Returns an array of the signature and the timestamp (integer).  
+    Returns The signature string.  NOTE: If you are going to use this 
+    with the Vuzit Javascript API then the value must be encoded with the 
+    PHP rawurlencode function.  See the Wiki example for more information:
+
+    http://wiki.github.com/vuzit/vuzitphp/code-samples
   
   Parameters:
     service - Name of the service: 'show', 'create', or 'destroy'.  
