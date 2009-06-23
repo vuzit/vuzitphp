@@ -184,6 +184,9 @@ class Vuzit_Document
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     $xml_string = curl_exec($ch);
+    if(!$xml_string) {
+      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
+    }
 
     $info = curl_getinfo($ch);
     if($info['http_code'] != 200) {
@@ -230,7 +233,7 @@ class Vuzit_Document
     $info = curl_getinfo($ch);
 
     if(!$xml_string) {
-      throw new Vuzit_Exception("CURL load failed");
+      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
     }
     // TODO: This needs to be re-added some time in the future by looking at the
     //       error codes.  I would add it but they aren't documented.  
@@ -309,7 +312,7 @@ class Vuzit_Document
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
-      throw new Vuzit_Exception("CURL load failed");
+      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
     }
 
     $info = curl_getinfo($ch);
