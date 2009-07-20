@@ -35,6 +35,12 @@ class Vuzit_Service
   public static $ServiceUrl = 'http://vuzit.com';
 
   /*
+  Variable: UserAgent
+    The user agent of the request.  
+  */  
+  public static $UserAgent = "VuzitPHP Library 1.0.1";
+
+  /*
   Function: getSignature
     Returns The signature string.  NOTE: If you are going to use this 
     with the Vuzit Javascript API then the value must be encoded with the 

@@ -179,6 +179,7 @@ class Vuzit_Document
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
     $url = self::paramsToUrl($post_params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -229,6 +230,7 @@ class Vuzit_Document
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
     $xml_string = curl_exec($ch);
     $info = curl_getinfo($ch);
 
@@ -295,6 +297,10 @@ class Vuzit_Document
   {
     $method = "create";
 
+    if(!file_exists($file)) {
+      throw new Vuzit_Exception("Cannot find file at path: $file");
+    }
+
     if($file_type != null) {
       $params['file_type'] = $fileType;
     }
@@ -306,6 +312,7 @@ class Vuzit_Document
     $ch = curl_init();
     $url = Vuzit_Service::$ServiceUrl . "/documents.xml";
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -383,8 +390,8 @@ class Vuzit_Document
   {
     $result = Vuzit_Service::$ServiceUrl . "/documents/" . $params['id'] . ".xml?";
 
-     foreach ($params as $key => &$val) {
-        $result .= ($key . '=' . rawurlencode($val) . '&');
+    foreach ($params as $key => &$val) {
+      $result .= ($key . '=' . rawurlencode($val) . '&');
     }
 
     return $result;
