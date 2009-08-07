@@ -3,11 +3,14 @@ require_once 'test_include.php';
 
 if(isset($_GET["delete_id"])) {
   $message = "Document specified: " . $_GET["delete_id"];
-  try {
-    $result = Vuzit_Document::destroy($_GET["delete_id"]);
+  try
+  {
+    Vuzit_Document::destroy($_GET["delete_id"]);
+    $success = true;
   }
-  catch(Vuzit_Exception $ex) {
-    $result = false;
+  catch(Vuzit_Exception $ex)
+  {
+    $success = false;
     $message = "Delete failed with code: " . $ex->getCode() . ", message: " . $ex->getMessage();
   }
 }
@@ -28,7 +31,7 @@ else {
         }
         else {
           echo $message . "<br/>";
-          echo "Success?: " . (($result == true) ? 'yes' : 'no');
+          echo "Success?: " . (($success == true) ? 'yes' : 'no');
         }
       ?>
     </h2>

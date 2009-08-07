@@ -27,7 +27,8 @@ class Vuzit_Service
   Variable: ServiceUrl
     The URL of the Vuzit web service.  This only needs to be changed if you 
     are running Vuzit Enterprise on your own server.  The default value is 
-    "http://vuzit.com".  
+    "http://vuzit.com".  To turn on SSL for secure documents use the 
+    Vuzit secure server URL: 'https://ssl.vuzit.com'. 
     
   Example:
     >Vuzit_Service::$ServiceUrl = 'http://vuzit.yourdomain.com';
@@ -38,7 +39,7 @@ class Vuzit_Service
   Variable: UserAgent
     The user agent of the request.  
   */  
-  public static $UserAgent = "VuzitPHP Library 1.0.1";
+  public static $UserAgent = "VuzitPHP Library 1.1.0";
 
   /*
   Function: getSignature

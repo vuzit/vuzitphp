@@ -154,15 +154,11 @@ class Vuzit_Document
 
   /*
   Function: destroy
-    Deletes a document by the ID.  Returns true if it succeeded.  It throws
-    a <Vuzit_Exception> on failure. 
+    Deletes a document by the ID.  It throws a <Vuzit_Exception> on failure. 
     
   Parameters:
     id - Document ID of the document you would like to destroy.  
 
-  Returns:
-    'true' if successful
-    
   Example:
     >Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
     >Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
@@ -173,17 +169,14 @@ class Vuzit_Document
   {
     $method = "destroy";
     $params['id'] = $id;
-    $result = true;
 
     $post_params = self::postParams($method, $params);
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
     $url = self::paramsToUrl($post_params);
-
+    $ch = self::curlRequest();
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
       throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
@@ -196,8 +189,6 @@ class Vuzit_Document
       throw new Vuzit_Exception("HTTP error " . $info['http_code']);
     }
     curl_close($ch);
-
-    return $result;
   }
 
   /*
@@ -225,12 +216,11 @@ class Vuzit_Document
 
     $post_params = self::postParams($method, $params);
 
-    $ch = curl_init();
+    $ch = self::curlRequest();
     $url = self::paramsToUrl($post_params);
-
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
+
     $xml_string = curl_exec($ch);
     $info = curl_getinfo($ch);
 
@@ -309,14 +299,13 @@ class Vuzit_Document
 
     $post_params = self::postParams($method, $params);
 
-    $ch = curl_init();
+    $ch = self::curlRequest();
     $url = Vuzit_Service::$ServiceUrl . "/documents.xml";
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-    curl_setopt($ch, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_params);
 
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
       throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
@@ -348,6 +337,22 @@ class Vuzit_Document
     // Success!
     $result = new Vuzit_Document();
     $result->setId($xml->web_id); 
+
+    return $result;
+  }
+
+  /*
+    Returns a CURL request.  
+  */
+  private static function curlRequest()
+  {
+    $result = curl_init();
+
+    if(substr(Vuzit_Service::$ServiceUrl, 0, 8) == "https://") {
+      curl_setopt($result, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($result, CURLOPT_SSL_VERIFYHOST, false);
+    }
+    curl_setopt($result, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent); 
 
     return $result;
   }
