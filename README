@@ -95,7 +95,7 @@ Delete (destroy) Document Example
   Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
   Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
 
-  $result = Vuzit_Document::destroy("DOCUMENT_ID");
+  Vuzit_Document::destroy("DOCUMENT_ID");
   ?>
 
 Upload and View with the JavaScript API Example
@@ -114,7 +114,7 @@ Upload and View with the JavaScript API Example
       <script type="text/javascript">
         // Called when the page is loaded.  
         function initialize()  {
-          vuzit.Base.PublicKeySet("<?php echo Vuzit_Service::$PublicKey; ?>"); 
+          vuzit.Base.apiKeySet("<?php echo Vuzit_Service::$PublicKey; ?>"); 
           var options = {signature: '<?php echo rawurlencode($sig); ?>', 
                          timestamp: '<?php echo $timestamp ?>', ssl: true}
           var viewer = vuzit.Viewer.fromId("<?php echo $doc->getId(); ?>", options);
