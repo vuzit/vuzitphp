@@ -3,7 +3,9 @@ require_once 'test_include.php';
 
 $exception = null;
 
-switch($_GET["type"])
+$type = array_key_exists("type", $_GET) ? $_GET["type"] : null;
+
+switch($type)
 {
 case "bad_api_key":
   try {

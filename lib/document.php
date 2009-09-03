@@ -291,7 +291,7 @@ class Vuzit_Document
       throw new Vuzit_Exception("Cannot find file at path: $file");
     }
 
-    if($file_type != null) {
+    if($fileType != null) {
       $params['file_type'] = $fileType;
     }
     $params['secure'] = ($secure) ? '1' : '0';
@@ -366,7 +366,8 @@ class Vuzit_Document
     $params['key'] = Vuzit_Service::$PublicKey;
 
     $timestamp = time();
-    $sig = Vuzit_Service::getSignature($method, $params['id'], $timestamp);
+    $id = array_key_exists('id', $params) ? $params['id'] : '';
+    $sig = Vuzit_Service::getSignature($method, $id, $timestamp);
     $params['signature'] = $sig;
     $params['timestamp'] = sprintf("%d", $timestamp);
 
