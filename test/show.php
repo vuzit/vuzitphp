@@ -1,7 +1,7 @@
 <?php
 require_once 'test_include.php';
 
-$doc = Vuzit_Document::findById($show_id);
+$doc = Vuzit_Document::findById($_GET["id"]);
 
 $timestamp = time();
 $sig = Vuzit_Service::getSignature("show", $doc->getId(), $timestamp);
@@ -13,8 +13,8 @@ $sig = Vuzit_Service::getSignature("show", $doc->getId(), $timestamp);
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Vuzit Show Example</title>
-    <link href="http://vuzit.com/stylesheets/Vuzit-2.6.css" rel="Stylesheet" type="text/css" />
-    <script src="http://vuzit.com/javascripts/Vuzit-2.6.js" type="text/javascript"></script>
+    <link href="http://vuzit.com/stylesheets/Vuzit-2.8.css" rel="Stylesheet" type="text/css" />
+    <script src="http://vuzit.com/javascripts/Vuzit-2.8.js" type="text/javascript"></script>
     
     <script type="text/javascript">
       // Called when the page is loaded.  

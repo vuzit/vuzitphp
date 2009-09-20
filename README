@@ -67,7 +67,7 @@ extension_dir = "C:/Program Files/php/ext"
 * Download the code - http://github.com/vuzit/vuzitphp/downloads
 * Sign up for a free Vuzit account - https://ssl.vuzit.com/signup
 * Code Examples - http://wiki.github.com/vuzit/vuzitphp/code-samples
-* Vuzit API Reference - http://doc.vuzit.com/vuzitphp
+* Vuzit API Reference - http://wiki.github.com/vuzit/vuzitphp/api_reference
 
 
 --------------------------------------------------
@@ -109,8 +109,8 @@ Upload and View with the JavaScript API Example
   ?>
   <html>
     <head>
-      <link href="http://vuzit.com/stylesheets/Vuzit-2.7.css" rel="Stylesheet" type="text/css" />
-      <script src="http://vuzit.com/javascripts/Vuzit-2.7.js" type="text/javascript"></script>
+      <link href="http://vuzit.com/stylesheets/Vuzit-2.8.css" rel="Stylesheet" type="text/css" />
+      <script src="http://vuzit.com/javascripts/Vuzit-2.8.js" type="text/javascript"></script>
       <script type="text/javascript">
         // Called when the page is loaded.  
         function initialize()  {

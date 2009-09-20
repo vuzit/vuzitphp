@@ -7,7 +7,7 @@ Class: Vuzit_Document
   To use this class you need to sign up for Vuzit first: 
   http://vuzit.com/signup
 */
-class Vuzit_Document
+class Vuzit_Document extends Vuzit_Base
 {
   /*
     Constructor.  Creates an empty document.  This is not called directly.  
@@ -168,11 +168,11 @@ class Vuzit_Document
   public static function destroy($id)
   {
     $method = "destroy";
-    $params['id'] = $id;
+    $params = array();
 
-    $post_params = self::postParams($method, $params);
+    $post_params = self::postParams($method, $params, $id);
 
-    $url = self::paramsToUrl($post_params);
+    $url = self::paramsToUrl('documents', $post_params, $id);
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -212,12 +212,12 @@ class Vuzit_Document
   public static function findById($id)
   {
     $method = "show";
-    $params['id'] = $id;
+    $params = array();
 
-    $post_params = self::postParams($method, $params);
+    $post_params = self::postParams($method, $params, $id);
 
     $ch = self::curlRequest();
-    $url = self::paramsToUrl($post_params);
+    $url = self::paramsToUrl('documents', $post_params, $id);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 
@@ -337,68 +337,6 @@ class Vuzit_Document
     // Success!
     $result = new Vuzit_Document();
     $result->setId($xml->web_id); 
-
-    return $result;
-  }
-
-  /*
-    Returns a CURL request.  
-  */
-  private static function curlRequest()
-  {
-    $result = curl_init();
-
-    if(substr(Vuzit_Service::$ServiceUrl, 0, 8) == "https://") {
-      curl_setopt($result, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($result, CURLOPT_SSL_VERIFYHOST, false);
-    }
-    curl_setopt($result, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent); 
-
-    return $result;
-  }
-
-  /*
-    Returns the default HTTP post parameters array.  
-  */
-  private static function postParams($method, $params)
-  {
-    $params['method'] = $method;
-    $params['key'] = Vuzit_Service::$PublicKey;
-
-    $timestamp = time();
-    $id = array_key_exists('id', $params) ? $params['id'] : '';
-    $sig = Vuzit_Service::getSignature($method, $id, $timestamp);
-    $params['signature'] = $sig;
-    $params['timestamp'] = sprintf("%d", $timestamp);
-
-    $result = array();
-    foreach ($params as $key => &$val) {
-      if(!empty($val)) {
-        if (is_array($val)) {
-          $val = implode(',', $val);
-        }
-
-        if($key != 'upload' && substr($val, 0, 1) == "@"){
-          $val = chr(32).$val;
-        }
-
-        $result[$key] = $val;
-      }
-    }
-
-    return $result;
-  }
-
-  /*
-    Changes an array (hash table) of parameters to a url. 
-  */
-  private static function paramsToUrl($params)
-  {
-    $result = Vuzit_Service::$ServiceUrl . "/documents/" . $params['id'] . ".xml?";
-
-    foreach ($params as $key => &$val) {
-      $result .= ($key . '=' . rawurlencode($val) . '&');
-    }
 
     return $result;
   }
