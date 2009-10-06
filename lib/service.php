@@ -32,7 +32,7 @@ class Vuzit_Service
     with the Vuzit Javascript API then the value must be encoded with the 
     PHP rawurlencode function.  See the Wiki example for more information:
   */
-  public static function getSignature($service, $id = '', $time = null)
+  public static function signature($service, $id = '', $time = null)
   {
     $result = null;
 

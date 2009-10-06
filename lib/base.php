@@ -48,7 +48,7 @@ class Vuzit_Base
     $params['key'] = Vuzit_Service::$PublicKey;
 
     $timestamp = time();
-    $sig = Vuzit_Service::getSignature($method, $id, $timestamp);
+    $sig = Vuzit_Service::signature($method, $id, $timestamp);
     $params['signature'] = $sig;
     $params['timestamp'] = sprintf("%d", $timestamp);
 

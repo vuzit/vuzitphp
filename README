@@ -105,7 +105,7 @@ Upload and View with the JavaScript API Example
   
   $doc = Vuzit_Document::upload("c:/temp/test.pdf");
   $timestamp = time();
-  $sig = Vuzit_Service::getSignature("show", $doc->getId(), $timestamp);
+  $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp);
   ?>
   <html>
     <head>

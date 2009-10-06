@@ -4,7 +4,7 @@ require_once 'test_include.php';
 $doc = Vuzit_Document::upload("c:/temp/test.pdf", true);
 
 $timestamp = time();
-$sig = Vuzit_Service::getSignature("show", $doc->getId(), $timestamp);
+$sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp);
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
