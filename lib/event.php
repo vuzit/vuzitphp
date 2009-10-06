@@ -89,7 +89,7 @@ class Vuzit_Event extends Vuzit_Base
   }
 
   /*
-    Loads an array of events.  It throws a <Vuzit_Exception> on failure.  
+    Loads an array of events.  It throws a <Vuzit_ClientException> on failure.  
   */
   public static function findAll($web_id, $options = null)
   {
@@ -117,12 +117,12 @@ class Vuzit_Event extends Vuzit_Base
     $info = curl_getinfo($ch);
 
     if(!$xml_string) {
-      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
+      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
     }
     // TODO: This needs to be re-added some time in the future by looking at the
     //       error codes.  I would add it but they aren't documented.  
     //if($info['http_code'] != 200) {
-    //  throw new Vuzit_Exception("HTTP error " . $info['http_code']);
+    //  throw new Vuzit_ClientException("HTTP error " . $info['http_code']);
     //}
 
     // Prevent the warnings if the XML is malformed
@@ -130,14 +130,14 @@ class Vuzit_Event extends Vuzit_Base
     curl_close($ch);
 
     if(!$xml) {
-      throw new Vuzit_Exception("Error loading XML response");
+      throw new Vuzit_ClientException("Error loading XML response");
     }
     if($xml->code) {
-      throw new Vuzit_Exception($xml->msg, (int)$xml->code);
+      throw new Vuzit_ClientException($xml->msg, (int)$xml->code);
     }
 
     if(!$xml->event) {
-      throw new Vuzit_Exception("Unknown error occurred");
+      throw new Vuzit_ClientException("Unknown error occurred");
     }
 
     $result = array();

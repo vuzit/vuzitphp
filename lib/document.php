@@ -1,11 +1,7 @@
 <?php
 /*
-Class: Vuzit_Document
   Class for uploading, loading, and deleting documents using the Vuzit Web
   Service API: http://vuzit.com/developer/documents_api.  
-
-  To use this class you need to sign up for Vuzit first: 
-  http://vuzit.com/signup
 */
 class Vuzit_Document extends Vuzit_Base
 {
@@ -26,11 +22,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getId
     Returns the document web ID.  
-
-  Returns: 
-    string
   */
   public function getId() {
     return $this->id;
@@ -44,18 +36,13 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getTitle
     Returns the document title.  
-
-  Returns:
-    string
   */
   public function getTitle() {
     return $this->title;
   }
 
   /*
-  Function: setTitle
     Sets the document tile. 
   */
   public function setTitle($value) {
@@ -63,11 +50,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getSubject
     Returns the document subject.  
-
-  Returns:
-    string
   */
   public function getSubject() {
     return $this->subject;
@@ -81,7 +64,6 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getPageCount
     Returns the document page count.  
 
   Returns:
@@ -99,11 +81,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getPageWidth
     Returns the document page width.  
-
-  Returns:
-    int
   */
   public function getPageWidth() {
     return $this->pageWidth;
@@ -117,11 +95,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getPageHeight
     Returns the document page height.  
-
-  Returns:
-    int
   */
   public function getPageHeight() {
     return $this->pageHeight;
@@ -135,11 +109,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: getFileSize
     Returns the document file size.  
-
-  Returns:
-    string
   */
   public function getFileSize() {
     return $this->fileSize;
@@ -153,17 +123,7 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: destroy
-    Deletes a document by the ID.  It throws a <Vuzit_Exception> on failure. 
-    
-  Parameters:
-    webId - Document ID of the document you would like to destroy.  
-
-  Example:
-    >Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-    >Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
-    >
-    >$result = Vuzit_Document::destroy("DOCUMENT_ID");
+    Deletes a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
   */
   public static function destroy($webId)
   {
@@ -179,35 +139,20 @@ class Vuzit_Document extends Vuzit_Base
 
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
-      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
+      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
     }
 
     $info = curl_getinfo($ch);
     if($info['http_code'] != 200) {
       // TODO: You should be checking the code and message and returning
       //       them!  
-      throw new Vuzit_Exception("HTTP error " . $info['http_code']);
+      throw new Vuzit_ClientException("HTTP error " . $info['http_code']);
     }
     curl_close($ch);
   }
 
   /*
-  Function: findById
-    Finds a document by the ID.  It throws a <Vuzit_Exception> on failure. 
-    
-  Parameters:
-    webId - ID of the document you would like to find.  
-
-  Returns:
-    <Vuzit_Document>
-    
-  Example:
-    >Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-    >Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
-    >
-    >$doc = Vuzit_Document::findById("DOCUMENT_ID");
-    >echo "Document id: " . $doc->getId();
-    >echo "Document title: " . $doc->getTitle();
+    Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
   */
   public static function findById($webId)
   {
@@ -225,12 +170,12 @@ class Vuzit_Document extends Vuzit_Base
     $info = curl_getinfo($ch);
 
     if(!$xml_string) {
-      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
+      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
     }
     // TODO: This needs to be re-added some time in the future by looking at the
     //       error codes.  I would add it but they aren't documented.  
     //if($info['http_code'] != 200) {
-    //  throw new Vuzit_Exception("HTTP error " . $info['http_code']);
+    //  throw new Vuzit_ClientException("HTTP error " . $info['http_code']);
     //}
 
     // Prevent the warnings if the XML is malformed
@@ -238,13 +183,13 @@ class Vuzit_Document extends Vuzit_Base
     curl_close($ch);
 
     if(!$xml) {
-      throw new Vuzit_Exception("Error loading XML response");
+      throw new Vuzit_ClientException("Error loading XML response");
     }
     if($xml->code) {
-      throw new Vuzit_Exception($xml->msg, (int)$xml->code);
+      throw new Vuzit_ClientException($xml->msg, (int)$xml->code);
     }
     if(!$xml->web_id) {
-      throw new Vuzit_Exception("Unknown error occurred");
+      throw new Vuzit_ClientException("Unknown error occurred");
     }
 
     // Success!
@@ -264,31 +209,14 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-  Function: upload
-     Uploads a file to Vuzit. It throws a <Vuzit_Exception> on failure. 
-  
-  Parameters:
-    file - Path to the file on the file system
-    secure - (Optional) Security type.  A value of 'true' indicates private and a value
-             of 'false' indicates public. 
-    file_type - (Optional) Type of the file: 'pdf', 'doc', etc.  
-     
-  Returns:
-    <Vuzit_Document>
-     
-  Example:
-    >Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-    >Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
-    >
-    >$doc = Vuzit_Document::upload("c:/path/to/document.pdf");
-    >echo "Document id: " . $doc->getId();
+     Uploads a file to Vuzit. It throws a <Vuzit_ClientException> on failure. 
   */
   public static function upload($file, $secure = true, $fileType = null)
   {
     $method = "create";
 
     if(!file_exists($file)) {
-      throw new Vuzit_Exception("Cannot find file at path: $file");
+      throw new Vuzit_ClientException("Cannot find file at path: $file");
     }
 
     if($fileType != null) {
@@ -308,14 +236,14 @@ class Vuzit_Document extends Vuzit_Base
 
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
-      throw new Vuzit_Exception('CURL load failed: "' . curl_error($ch) . '"');
+      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
     }
 
     $info = curl_getinfo($ch);
     // TODO: This needs to be re-added some time in the future by looking at the
     //       error codes.  I would add it but they aren't documented.  
     //if($info['http_code'] != 201) {
-    //  throw new Vuzit_Exception("HTTP error, expected 201 but got: " . $info['http_code']);
+    //  throw new Vuzit_ClientException("HTTP error, expected 201 but got: " . $info['http_code']);
     //}
 
     // Prevent the warnings if the XML is malformed
@@ -323,15 +251,15 @@ class Vuzit_Document extends Vuzit_Base
     curl_close($ch);
 
     if(!$xml) {
-      throw new Vuzit_Exception("Error loading XML response");
+      throw new Vuzit_ClientException("Error loading XML response");
     }
 
     if($xml->code) {
-      throw new Vuzit_Exception($xml->msg, (int)$xml->code);
+      throw new Vuzit_ClientException($xml->msg, (int)$xml->code);
     }
 
     if(!$xml->web_id) {
-      throw new Vuzit_Exception("Unknown error occurred");
+      throw new Vuzit_ClientException("Unknown error occurred");
     }
 
     // Success!
