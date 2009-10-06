@@ -1,8 +1,10 @@
 <?php
 require_once 'test_include.php';
 
-$options = array("e" => "page_view");
-$list = Vuzit_Event::findAll("1bvr", $options);
+//$options = array("e" => "page_view");
+$options = array("v" => "demo_test");
+
+$list = Vuzit_Event::findAll("1fm6", $options);
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -17,27 +19,30 @@ $list = Vuzit_Event::findAll("1bvr", $options);
   </head>
   <body onload="">
     <p>
-      Records found: <?php echo count($list); ?>
+      Total events: <?php echo count($list); ?>
     </p>
     <?
+      $event = count($list);
       for($i = 0; $i < count($list); $i++)
       { 
         $item = $list[$i];
+        $event--;
     ?>
-    <h2>
-      Event <?php echo $i ?>
-    </h2>
+    <h3>
+      Event <?php echo ($event + 1) ?>
+    </h3>
     <ul>
-      <li>Web id: <?php echo $item->getWebId(); ?></li>
-      <li>Referer: <a href="<?php echo $item->getReferer(); ?>"><?php echo $item->getReferer(); ?></a></li>
-      <li>Event: <?php echo $item->getEvent(); ?></li>
+      <li>
+        Document <?php echo $item->getWebId(); ?> on 
+        <a href="<?php echo $item->getReferer(); ?>"><?php echo $item->getReferer(); ?></a></li>
+      <li>
+        <?php echo $item->getEvent(); ?> on page <?php echo $item->getPage(); ?> at 
+        <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
+        (value: <?php echo $item->getValue(); ?>)
+      </li>
       <li>Remote host: <a href="location.php?ip=<?php echo $item->getRemoteHost(); ?>">
                         <?php echo $item->getRemoteHost();  ?></a></li>
       <li>User Agent: <?php echo $item->getUserAgent(); ?></li>
-      <li>Value: <?php echo $item->getValue(); ?></li>
-      <li>Requested at: <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?></li>
-      <li>Page: <?php echo $item->getPage(); ?></li>
-      <li>Zoom: <?php echo $item->getZoom(); ?></li>
     </ul>
     <?php } ?>
     

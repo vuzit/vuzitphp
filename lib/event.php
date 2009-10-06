@@ -91,7 +91,7 @@ class Vuzit_Event extends Vuzit_Base
   /*
     Loads an array of events.  It throws a <Vuzit_Exception> on failure.  
   */
-  public static function findAll($web_id, $options)
+  public static function findAll($web_id, $options = null)
   {
     $method = "show";
     $options_default = array("id" => $web_id,
@@ -101,15 +101,17 @@ class Vuzit_Event extends Vuzit_Base
                              "offset" => null,
                              "limit" => null);
 
-    $new_options = array_merge($options_default, $options);
+    if($options != null) {
+      $options = array_merge($options_default, $options);
+    }
 
-    $post_params = self::postParams($method, $new_options, $web_id);
+    $post_params = self::postParams($method, $options, $web_id);
 
     $ch = self::curlRequest();
     $url = self::paramsToUrl("events", $post_params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
 
     $xml_string = curl_exec($ch);
     $info = curl_getinfo($ch);

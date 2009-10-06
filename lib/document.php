@@ -157,7 +157,7 @@ class Vuzit_Document extends Vuzit_Base
     Deletes a document by the ID.  It throws a <Vuzit_Exception> on failure. 
     
   Parameters:
-    id - Document ID of the document you would like to destroy.  
+    webId - Document ID of the document you would like to destroy.  
 
   Example:
     >Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
@@ -165,14 +165,14 @@ class Vuzit_Document extends Vuzit_Base
     >
     >$result = Vuzit_Document::destroy("DOCUMENT_ID");
   */
-  public static function destroy($id)
+  public static function destroy($webId)
   {
     $method = "destroy";
     $params = array();
 
-    $post_params = self::postParams($method, $params, $id);
+    $post_params = self::postParams($method, $params, $webId);
 
-    $url = self::paramsToUrl('documents', $post_params, $id);
+    $url = self::paramsToUrl('documents', $post_params, $webId);
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -196,7 +196,7 @@ class Vuzit_Document extends Vuzit_Base
     Finds a document by the ID.  It throws a <Vuzit_Exception> on failure. 
     
   Parameters:
-    id - ID of the document you would like to find.  
+    webId - ID of the document you would like to find.  
 
   Returns:
     <Vuzit_Document>
@@ -209,15 +209,15 @@ class Vuzit_Document extends Vuzit_Base
     >echo "Document id: " . $doc->getId();
     >echo "Document title: " . $doc->getTitle();
   */
-  public static function findById($id)
+  public static function findById($webId)
   {
     $method = "show";
     $params = array();
 
-    $post_params = self::postParams($method, $params, $id);
+    $post_params = self::postParams($method, $params, $webId);
 
     $ch = self::curlRequest();
-    $url = self::paramsToUrl('documents', $post_params, $id);
+    $url = self::paramsToUrl('documents', $post_params, $webId);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 
@@ -336,7 +336,7 @@ class Vuzit_Document extends Vuzit_Base
 
     // Success!
     $result = new Vuzit_Document();
-    $result->setId($xml->web_id); 
+    $result->setId((string)$xml->web_id); 
 
     return $result;
   }

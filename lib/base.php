@@ -62,6 +62,8 @@ class Vuzit_Base
         if($key != 'upload' && substr($val, 0, 1) == "@"){
           $val = chr(32).$val;
         }
+        // TODO: If is_bool && $val == true then turn to "1"
+        //       If is_bool && $val == false then turn to "0"
 
         $result[$key] = $val;
       }
