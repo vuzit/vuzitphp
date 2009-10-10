@@ -29,13 +29,6 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-    Sets the document web ID. 
-  */
-  public function setId($value) {
-    $this->id = $value;
-  }
-
-  /*
     Returns the document title.  
   */
   public function getTitle() {
@@ -43,24 +36,10 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-    Sets the document tile. 
-  */
-  public function setTitle($value) {
-    $this->title = $value;
-  }
-
-  /*
     Returns the document subject.  
   */
   public function getSubject() {
     return $this->subject;
-  }
-
-  /*
-    Sets the document subject. 
-  */
-  public function setSubject($value) {
-    $this->subject = $value;
   }
 
   /*
@@ -74,24 +53,10 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-    Sets the document page count. 
-  */
-  public function setPageCount($value) {
-    $this->pageCount = (int)$value;
-  }
-
-  /*
     Returns the document page width.  
   */
   public function getPageWidth() {
     return $this->pageWidth;
-  }
-
-  /*
-    Sets the document page width. 
-  */
-  public function setPageWidth($value) {
-    $this->pageWidth = (int)$value;
   }
 
   /*
@@ -102,24 +67,10 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-    Sets the document page height. 
-  */
-  public function setPageHeight($value) {
-    $this->pageHeight = (int)$value;
-  }
-
-  /*
     Returns the document file size.  
   */
   public function getFileSize() {
     return $this->fileSize;
-  }
-
-  /*
-    Sets the document file size. 
-  */
-  public function setFileSize($value) {
-    $this->fileSize = (int)$value;
   }
 
   /*
@@ -192,17 +143,16 @@ class Vuzit_Document extends Vuzit_Base
       throw new Vuzit_ClientException("Unknown error occurred");
     }
 
-    // Success!
     $result = new Vuzit_Document();
-    $result->setId($xml->web_id); 
+    $result->id = $xml->web_id; 
 
     if($xml->title) {
-      $result->setTitle($xml->title);
-      $result->setSubject($xml->subject);
-      $result->setPageCount($xml->page_count);
-      $result->setPageWidth($xml->width);
-      $result->setPageHeight($xml->height);
-      $result->setFileSize($xml->file_size);
+      $result->title = $xml->title;
+      $result->subject = $xml->subject;
+      $result->pageCount = $xml->page_count;
+      $result->pageWidth = $xml->width;
+      $result->pageHeight = $xml->height;
+      $result->fileSize = $xml->file_size;
     }
 
     return $result;
@@ -262,9 +212,8 @@ class Vuzit_Document extends Vuzit_Base
       throw new Vuzit_ClientException("Unknown error occurred");
     }
 
-    // Success!
     $result = new Vuzit_Document();
-    $result->setId((string)$xml->web_id); 
+    $result->id = (string)$xml->web_id; 
 
     return $result;
   }
