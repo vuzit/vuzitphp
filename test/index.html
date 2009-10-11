@@ -3,18 +3,60 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Vuzit Basic Viewer Example</title>
-    <link href="http://vuzit.com/stylesheets/Vuzit-2.5.css" rel="Stylesheet" type="text/css" />
-    <script src="http://vuzit.com/javascripts/Vuzit-2.5.js" type="text/javascript"></script>
-
+    <title>VuzitPHP Test Page</title>
   <body onload="">
     <h1>Tests</h1>
     <ul>
-      <li><a href="upload.php">Upload</a></li>
-      <li><a href="show.php?id=1h36">Show</a></li>
-      <li><a href="errors.php">Errors</a></li>
-      <li><a href="event.php">Event</a></li>
-      <li><a href="destroy.php">Destroy</a></li>
+      <li>
+        <a href="test.php">test.php</a>
+        <ul>
+          <li>To run this you have to create a URL to test.php like so: test.php?puk=abc&amp;prk=123&amp;c=load</li>
+        </ul>
+      </li>
+      <li>
+        Sub-commands:
+        <ul>
+          <li>upload</li>
+          <li>delete</li>
+          <li>load</li>
+          <li>event</li>
+        </ul>
+      </li>
+      <li>
+        Global parameters:
+        <ul>
+          <li>puk - Public key (REQUIRED)</li>
+          <li>prk - Private key (REQUIRED)</li>
+        </ul>
+      </li>
+      <li>
+        Upload parameters:
+        <ul>
+          <li>path - Path to the file to upload (REQUIRED)</li>
+          <li>download_pdf - Set to "1" for true or "0" for false</li>
+          <li>download_document - Set to "1" for true or "0" for false</li>
+        </ul>
+      </li>
+      <li>
+        Load parameters:
+        <ul>
+          <li>id - Document web ID (REQUIRED)</li>
+        </ul>
+      </li>
+      <li>
+        Delete parameters:
+        <ul>
+          <li>id - Document web ID (REQUIRED)</li>
+        </ul>
+      </li>
+      <li>
+        Event parameters:
+        <ul>
+          <li>e - Event type to load</li>
+          <li>id - Document id to load</li>
+          <li>v - Value type to load</li>
+        </ul>
+      </li>
   </body>
 </html>
 

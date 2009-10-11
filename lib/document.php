@@ -86,18 +86,15 @@ class Vuzit_Document extends Vuzit_Base
     $url = self::paramsToUrl('documents', $post_params, $webId);
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
     curl_setopt($ch, CURLOPT_URL, $url);
 
     $xml_string = curl_exec($ch);
-    if(!$xml_string) {
-      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
-    }
 
     $info = curl_getinfo($ch);
     if($info['http_code'] != 200) {
-      // TODO: You should be checking the code and message and returning
-      //       them!  
-      throw new Vuzit_ClientException("HTTP error " . $info['http_code']);
+      $xml = @simplexml_load_string($xml_string); 
+      throw new Vuzit_ClientException((string)$xml->msg, (int)$xml->code);
     }
     curl_close($ch);
   }
@@ -144,15 +141,15 @@ class Vuzit_Document extends Vuzit_Base
     }
 
     $result = new Vuzit_Document();
-    $result->id = $xml->web_id; 
+    $result->id = (string)$xml->web_id; 
 
     if($xml->title) {
-      $result->title = $xml->title;
-      $result->subject = $xml->subject;
-      $result->pageCount = $xml->page_count;
-      $result->pageWidth = $xml->width;
-      $result->pageHeight = $xml->height;
-      $result->fileSize = $xml->file_size;
+      $result->title = (string)$xml->title;
+      $result->subject = (string)$xml->subject;
+      $result->pageCount = (int)$xml->page_count;
+      $result->pageWidth = (int)$xml->width;
+      $result->pageHeight = (int)$xml->height;
+      $result->fileSize = (int)$xml->file_size;
     }
 
     return $result;

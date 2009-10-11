@@ -1,5 +1,5 @@
 <?php
-require_once 'test_include.php';
+require_once '../lib/vuzit.php';
 
 $exception = null;
 

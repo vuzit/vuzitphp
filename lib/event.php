@@ -91,10 +91,10 @@ class Vuzit_Event extends Vuzit_Base
   /*
     Loads an array of events.  It throws a <Vuzit_ClientException> on failure.  
   */
-  public static function findAll($web_id, $options = null)
+  public static function findAll($options = null)
   {
     $method = "show";
-    $options_default = array("id" => $web_id,
+    $options_default = array("id" => null,
                              "value" => null,
                              "e" => null,
                              "m" => "find",
@@ -105,6 +105,7 @@ class Vuzit_Event extends Vuzit_Base
       $options = array_merge($options_default, $options);
     }
 
+    $web_id = array_key_exists("id", $options) ? $options["id"] : null;
     $post_params = self::postParams($method, $options, $web_id);
 
     $ch = self::curlRequest();
@@ -119,11 +120,6 @@ class Vuzit_Event extends Vuzit_Base
     if(!$xml_string) {
       throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
     }
-    // TODO: This needs to be re-added some time in the future by looking at the
-    //       error codes.  I would add it but they aren't documented.  
-    //if($info['http_code'] != 200) {
-    //  throw new Vuzit_ClientException("HTTP error " . $info['http_code']);
-    //}
 
     // Prevent the warnings if the XML is malformed
     $xml = @simplexml_load_string($xml_string); 
@@ -145,12 +141,12 @@ class Vuzit_Event extends Vuzit_Base
     foreach($xml->event as $node)
     {
       $event = new Vuzit_Event();
-      $event->web_id = $node->web_id; 
-      $event->event = $node->event; 
-      $event->remoteHost = $node->remote_host;
-      $event->referer = $node->referer;
-      $event->userAgent = $node->user_agent;
-      $event->valueType = $node->value;
+      $event->web_id = (string)$node->web_id; 
+      $event->event = (string)$node->event; 
+      $event->remoteHost = (string)$node->remote_host;
+      $event->referer = (string)$node->referer;
+      $event->userAgent = (string)$node->user_agent;
+      $event->valueType = (string)$node->value;
       $event->requestedAt = (int)$node->requested;
       $event->page = $node->page != null ? (int)$node->page : -1;
       $event->zoom = $node->zoom != null ? (int)$node->zoom : -1;
