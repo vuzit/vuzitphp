@@ -4,28 +4,71 @@
 */
 class Vuzit_Service
 {
-  /*
-    The Vuzit public API key. 
-  */
-  public static $PublicKey = '';
+  private static $publicKey = '';
+  private static $privateKey = '';
+  private static $serviceUrl = 'http://vuzit.com';
+  private static $productName = "VuzitPHP Library 1.2.0";
+  private static $userAgent = "VuzitPHP Library 1.2.0";
+
+  // Public static getter and setter methods
 
   /*
-    The Vuzit private API key. Do NOT share this with anyone!  
-  */
-  public static $PrivateKey = '';
+    Returns the public API key.  
+   */
+  public static function getPublicKey() {
+    return self::$publicKey;
+  }
 
   /*
-    The URL of the Vuzit web service.  This only needs to be changed if you 
-    are running Vuzit Enterprise on your own server.  The default value is 
-    "http://vuzit.com".  To turn on SSL for secure documents use the 
-    Vuzit secure server URL: 'https://ssl.vuzit.com'. 
+    Sets Vuzit public API key. 
   */
-  public static $ServiceUrl = 'http://vuzit.com';
+  public static function setPublicKey($key) {
+    self::$publicKey = $key;
+  }
 
   /*
-    The user agent of the request.  
-  */  
-  public static $UserAgent = "VuzitPHP Library 1.1.0";
+    Returns the private API key.  
+   */
+  public static function getPrivateKey() {
+    return self::$privateKey;
+  }
+
+  /*
+    Sets Vuzit private API key. 
+  */
+  public static function setPrivateKey($key) {
+    self::$privateKey = $key;
+  }
+
+  /*
+    Returns the service URL.  
+   */
+  public static function getServiceUrl() {
+    return self::$serviceUrl;
+  }
+
+  /*
+    Sets service URL. 
+  */
+  public static function setServiceUrl($url) {
+    self::$serviceUrl = $url;
+  }
+
+  /*
+    Returns the user agent.  
+   */
+  public static function getUserAgent() {
+    return self::$userAgent;
+  }
+
+  /*
+    Sets the user agent. 
+  */
+  public static function setUserAgent($agent) {
+    self::$userAgent = (self::$agent + " (" + self::$productName + ")");
+  }
+
+  // Public static methods
 
   /*
     Returns The signature string.  NOTE: If you are going to use this 
@@ -37,11 +80,13 @@ class Vuzit_Service
     $result = null;
 
     $time = ($time == null) ? time() : $time;
-    $msg = $service . $id . self::$PublicKey . $time;
-    $hmac = self::hmac_sha1(self::$PrivateKey, $msg);
+    $msg = $service . $id . self::getPublicKey() . $time;
+    $hmac = self::hmac_sha1(self::getPrivateKey(), $msg);
 
     return base64_encode($hmac);
   }
+
+  // Private static methods
 
   /**
      Returns the HMAC SHA1 value. 

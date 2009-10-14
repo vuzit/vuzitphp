@@ -9,7 +9,7 @@ switch($type)
 {
 case "bad_api_key":
   try {
-    Vuzit_Service::$PublicKey = 'does not exist';
+    Vuzit_Service::setPublicKey('does not exist');
     $doc = Vuzit_Document::findById($show_id);
   }
   catch(Vuzit_ClientException $ex) {
@@ -26,7 +26,7 @@ case "doc_does_not_exist":
   break;
 case "invalid_signature":
    try {
-    Vuzit_Service::$PrivateKey = 'not_a_valid_key';
+    Vuzit_Service::setPrivateKey('not_a_valid_key');
     $doc = Vuzit_Document::findById($show_id);
   }
   catch(Vuzit_ClientException $ex) {

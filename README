@@ -17,8 +17,8 @@ Below is a basic upload example:
   <?php  
   include_once "VuzitPHP/lib/vuzit.php";  
 
-  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';  
-  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';  
+  Vuzit_Service::setPublicKey('YOUR_PUBLIC_API_KEY');  
+  Vuzit_Service::setPrivateKey('YOUR_PRIVATE_API_KEY');  
 
   $doc = Vuzit_Document::upload("c:/path/to/document.pdf");  
 
@@ -79,8 +79,8 @@ Find Document Example - how to load a document
   <?php
   include_once "VuzitPHP/lib/vuzit.php";
 
-  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
+  Vuzit_Service::setPublicKey('YOUR_PUBLIC_API_KEY');
+  Vuzit_Service::setPrivateKey('YOUR_PRIVATE_API_KEY');
 
   $doc = Vuzit_Document::findById("DOCUMENT_ID");
   echo "Document id: " . $doc->getId();
@@ -92,8 +92,8 @@ Delete (destroy) Document Example
   <?php
   include_once "VuzitPHP/lib/vuzit.php";
 
-  Vuzit_Service::$PublicKey = 'YOUR_PUBLIC_API_KEY';
-  Vuzit_Service::$PrivateKey = 'YOUR_PRIVATE_API_KEY';
+  Vuzit_Service::setPublicKey('YOUR_PUBLIC_API_KEY');
+  Vuzit_Service::setPrivateKey('YOUR_PRIVATE_API_KEY');
 
   Vuzit_Document::destroy("DOCUMENT_ID");
   ?>
@@ -114,7 +114,7 @@ Upload and View with the JavaScript API Example
       <script type="text/javascript">
         // Called when the page is loaded.  
         function initialize()  {
-          vuzit.Base.apiKeySet("<?php echo Vuzit_Service::$PublicKey; ?>"); 
+          vuzit.Base.apiKeySet("<?php echo Vuzit_Service::getPublicKey(); ?>"); 
           var options = {signature: '<?php echo rawurlencode($sig); ?>', 
                          timestamp: '<?php echo $timestamp ?>', ssl: true}
           var viewer = vuzit.Viewer.fromId("<?php echo $doc->getId(); ?>", options);

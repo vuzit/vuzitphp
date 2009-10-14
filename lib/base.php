@@ -12,11 +12,11 @@ class Vuzit_Base
   {
     $result = curl_init();
 
-    if(substr(Vuzit_Service::$ServiceUrl, 0, 8) == "https://") {
+    if(substr(Vuzit_Service::getServiceUrl(), 0, 8) == "https://") {
       curl_setopt($result, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($result, CURLOPT_SSL_VERIFYHOST, false);
     }
-    curl_setopt($result, CURLOPT_USERAGENT, Vuzit_Service::$UserAgent); 
+    curl_setopt($result, CURLOPT_USERAGENT, Vuzit_Service::getUserAgent()); 
 
     return $result;
   }
@@ -26,7 +26,7 @@ class Vuzit_Base
   */
   protected static function paramsToUrl($resource, $params, $id = null)
   {
-    $result = Vuzit_Service::$ServiceUrl . "/" . $resource;
+    $result = Vuzit_Service::getServiceUrl() . "/" . $resource;
     if($id != null) {
       $result .= "/" . $id;
     }
@@ -45,7 +45,7 @@ class Vuzit_Base
   protected static function postParams($method, $params, $id = '')
   {
     $params['method'] = $method;
-    $params['key'] = Vuzit_Service::$PublicKey;
+    $params['key'] = Vuzit_Service::getPublicKey();
 
     $timestamp = time();
     $sig = Vuzit_Service::signature($method, $id, $timestamp);

@@ -35,7 +35,7 @@ function header_load($doc = null)
       <script type="text/javascript">
         // Called when the page is loaded.  
         function initialize()  {
-          vuzit.Base.apiKeySet("<?php echo Vuzit_Service::$PublicKey; ?>"); 
+          vuzit.Base.apiKeySet("<?php echo Vuzit_Service::getPublicKey(); ?>"); 
           var options = {signature: '<?php echo rawurlencode($sig); ?>', 
                          timestamp: '<?php echo $timestamp ?>', ssl: true}
           var viewer = vuzit.Viewer.fromId("<?php echo $id; ?>", options);
@@ -123,18 +123,17 @@ function event_command()
   header_load();
   $options = array();
 
-  $value = get("v");
-  $event = get("e");
-  $id = get("id");
-
-  if($value != null) {
-    $options["v"] = $value;
+  if(get("v") != null) {
+    $options["v"] = get("v");
   }
-  if($event != null) {
-    $options["e"] = $event;
+  if(get("e") != null) {
+    $options["e"] = get("e");
   }
-  if($id != null) {
-    $options["id"] = $id;
+  if(get("id") != null) {
+    $options["id"] = get("id");
+  }
+  if(get("l") != null) {
+    $options["limit"] = get("l");
   }
 
   $list = Vuzit_Event::findAll($options);
@@ -182,8 +181,14 @@ if($public_key == null || $private_key == null)
   return;
 }
 
-Vuzit_Service::$PublicKey = $public_key;
-Vuzit_Service::$PrivateKey = $private_key;
+$service_url = get("su");
+
+if($service_url != null) {
+  Vuzit_Service::setServiceUrl($service_url);
+}
+
+Vuzit_Service::setPublicKey($public_key);
+Vuzit_Service::setPrivateKey($private_key);
 
 // Grab the command and execute
 switch(get("c"))

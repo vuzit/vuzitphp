@@ -175,7 +175,7 @@ class Vuzit_Document extends Vuzit_Base
     $post_params = self::postParams($method, $params);
 
     $ch = self::curlRequest();
-    $url = Vuzit_Service::$ServiceUrl . "/documents.xml";
+    $url = Vuzit_Service::getServiceUrl() . "/documents.xml";
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
