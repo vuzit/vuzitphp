@@ -10,6 +10,23 @@ function get($key)
   return array_key_exists($key, $_GET) ? $_GET[$key] : null;
 }
 
+// Exports a set of CSV fields into a line of CSV text.  The function
+// mirrors the PHP fputcsv function.  
+function csv_line($fields, $delimeter = ',', $enclosure = '"')
+{
+  $result = '';
+
+  for($i = 0; $i < count($fields); $i++)
+  {
+    if($i != 0) {
+      $result .= $delimeter;
+    }
+    $result .= ($enclosure . str_replace('"', '""', $fields[$i]) . $enclosure);
+  }
+
+  return $result . "\r\n";
+}
+
 // Load the header
 function header_load($doc = null)
 {
@@ -120,7 +137,6 @@ function upload_command()
 // Runs the event command
 function event_command()
 {
-  header_load();
   $options = array();
 
   if(get("v") != null) {
@@ -137,36 +153,79 @@ function event_command()
   }
 
   $list = Vuzit_Event::findAll($options);
+
+  switch(get("o"))
+  {
+    case "csv":
+      event_load_csv($list);
+      break;
+    default:
+      header_load();
+      event_load_html($list);
+      footer_load();
+      break;
+  }
+}
+
+// Loads the output of the event list as a CSV file.  
+function event_load_csv($list, $fileName = "events.csv")
+{
+  $csv = '';
+
+  $csv .= csv_line(array("web_id", "event", "page", "requested_at", "value", 
+                         "remote_host", "referer", "user_agent", "zoom"));
+  foreach($list as $event)
+  {
+    $fields = array($event->getWebId(),
+                    $event->getEvent(),
+                    $event->getPage(),
+                    date("m/d/y H:i", $event->getRequestedAt()),
+                    $event->getValue(),
+                    $event->getRemoteHost(),
+                    $event->getReferer(),
+                    $event->getUserAgent(),
+                    $event->getZoom()
+                   );
+    $csv .= csv_line($fields);
+  }
+  
+  header('Content-type: text/csv');
+  header("Content-Disposition: attachment; filename=\"" . $fileName . "\";"); 
+  echo $csv;
+}
+
+// Loads the output of the event list as HTML.  
+function event_load_html($list)
+{
   ?>
-    <p>
-      Total events: <?php echo count($list); ?>
-    </p>
-    <?
-      $event = count($list);
-      for($i = 0; $i < count($list); $i++)
-      { 
-        $item = $list[$i];
-        $event--;
-        ?>
-        <h3>
-          Event <?php echo ($event + 1) ?>
-        </h3>
-        <ul>
-          <li>
-            Document <?php echo $item->getWebId(); ?> on 
-            <a href="<?php echo $item->getReferer(); ?>"><?php echo $item->getReferer(); ?></a></li>
-          <li>
-            <?php echo $item->getEvent(); ?> on page <?php echo $item->getPage(); ?> at 
-            <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
-            (value: <?php echo $item->getValue(); ?>)
-          </li>
-          <li>Remote host: <a href="location.php?ip=<?php echo $item->getRemoteHost(); ?>">
-                            <?php echo $item->getRemoteHost();  ?></a></li>
-          <li>User Agent: <?php echo $item->getUserAgent(); ?></li>
-        </ul>
-        <?php
-      } 
-  footer_load();
+  <p>
+    Total events: <?php echo count($list); ?>
+  </p>
+  <?
+  $event = count($list);
+  for($i = 0; $i < count($list); $i++)
+  { 
+    $item = $list[$i];
+    $event--;
+    ?>
+    <h3>
+      Event <?php echo ($event + 1) ?>
+    </h3>
+    <ul>
+      <li>
+        Document <?php echo $item->getWebId(); ?> on 
+        <a href="<?php echo $item->getReferer(); ?>"><?php echo $item->getReferer(); ?></a></li>
+      <li>
+        <?php echo $item->getEvent(); ?> on page <?php echo $item->getPage(); ?> at 
+        <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
+        (value: <?php echo $item->getValue(); ?>)
+      </li>
+      <li>Remote host: <a href="location.php?ip=<?php echo $item->getRemoteHost(); ?>">
+                        <?php echo $item->getRemoteHost();  ?></a></li>
+      <li>User Agent: <?php echo $item->getUserAgent(); ?></li>
+    </ul>
+    <?php
+  } 
 }
 
 // MAIN EXECUTION

@@ -1,5 +1,5 @@
 <?php
-require_once 'test_include.php';
+require "geo_location.php";
 
 if(isset($_GET["ip"])) {
   try
