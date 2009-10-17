@@ -18,15 +18,18 @@ class Vuzit_Event extends Vuzit_Base
     $this->valueType = null;
     $this->requestedAt = null;
     $this->page = -1;
-    $this->zoom = -1;
+    $this->duration = -1;
   }
 
   /*
-  Function: getId
-    Returns the document web ID.  
+    Returns the duration on the page. 
+  */
+  public function getDuration() {
+    return $this->duration;
+  }
 
-  Returns: 
-    string
+  /*
+    Returns the document web ID.  
   */
   public function getWebId() {
     return $this->web_id;
@@ -82,35 +85,22 @@ class Vuzit_Event extends Vuzit_Base
   }
 
   /*
-    Returns the zoom level.  Returns -1 if not set.  
-  */
-  public function getZoom() {
-    return $this->zoom;
-  }
-
-  /*
     Loads an array of events.  It throws a <Vuzit_ClientException> on failure.  
   */
-  public static function findAll($options = null)
+  public static function findAll($webId, $options = null)
   {
     $method = "show";
-    $options_default = array("id" => null,
-                             "value" => null,
-                             "e" => null,
-                             "m" => "find",
-                             "offset" => null,
-                             "limit" => null);
+    // This will be removed soon
+    $options["m"] = 'find';
 
-    if($options != null) {
-      $options = array_merge($options_default, $options);
+    if(!$webId) {
+      throw new Vuzit_ClientException("No webId parameter specified");
     }
 
-    $web_id = array_key_exists("web_id", $options) ? $options["web_id"] : null;
-    // rename to postParameters
-    $post_params = self::postParameters($method, $options, $web_id);
+    $post_params = self::postParameters($method, $options, $webId);
+    $post_params["web_id"] = $webId;
 
     $ch = self::curlRequest();
-    // rename to parametersToUrl
     $url = self::parametersToUrl("events", $post_params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -149,9 +139,9 @@ class Vuzit_Event extends Vuzit_Base
       $event->referer = (string)$node->referer;
       $event->userAgent = (string)$node->user_agent;
       $event->valueType = (string)$node->value;
-      $event->requestedAt = (int)$node->requested;
+      $event->requestedAt = (int)$node->requested_at;
       $event->page = $node->page != null ? (int)$node->page : -1;
-      $event->zoom = $node->zoom != null ? (int)$node->zoom : -1;
+      $event->duration = $node->duration != null ? (int)$node->duration : -1;
 
       $result[] = $event;
     }

@@ -150,14 +150,11 @@ function event_command()
   if(get("e") != null) {
     $options["event"] = get("e");
   }
-  if(get("id") != null) {
-    $options["web_id"] = get("id");
-  }
   if(get("l") != null) {
     $options["limit"] = get("l");
   }
 
-  $list = Vuzit_Event::findAll($options);
+  $list = Vuzit_Event::findAll(get("id"), $options);
 
   switch(get("o"))
   {
@@ -203,34 +200,34 @@ function event_load_csv($list, $fileName = "events.csv")
 function event_load_html($list)
 {
   ?>
+  <h3>
+    Document <?php echo $list[0]->getWebId(); ?>
+  </h3>
   <p>
     Total events: <?php echo count($list); ?>
   </p>
+  <ol>
   <?
   $event = count($list);
   for($i = 0; $i < count($list); $i++)
   { 
     $item = $list[$i];
     $event--;
+    $host = $item->getRemoteHost();
     ?>
-    <h3>
-      Event <?php echo ($event + 1) ?>
-    </h3>
-    <ul>
       <li>
-        Document <?php echo $item->getWebId(); ?> on 
-        <a href="<?php echo $item->getReferer(); ?>"><?php echo $item->getReferer(); ?></a></li>
-      <li>
-        <?php echo $item->getEvent(); ?> on page <?php echo $item->getPage(); ?> at 
-        <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
-        (value: <?php echo $item->getValue(); ?>)
+        [<?php echo $item->getEvent(); ?>] on page <?php echo $item->getPage(); ?> 
+        for <?php echo $item->getDuration(); ?> seconds 
+        at <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
+        (value: <?php echo $item->getValue(); ?>) - 
+        <a href="<?php echo $item->getReferer(); ?>">Referring page</a> - 
+        Remote host: 
+        <a href="location.php?ip=<?php echo $host; ?>"><?php echo $host; ?></a>
+        - User Agent: <?php echo substr($item->getUserAgent(), 0, 5); ?>...
       </li>
-      <li>Remote host: <a href="location.php?ip=<?php echo $item->getRemoteHost(); ?>">
-                        <?php echo $item->getRemoteHost();  ?></a></li>
-      <li>User Agent: <?php echo $item->getUserAgent(); ?></li>
-    </ul>
     <?php
   } 
+  echo "</ol>";
 }
 
 // MAIN EXECUTION
