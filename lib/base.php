@@ -24,13 +24,14 @@ class Vuzit_Base
   /*
     Changes an array (hash table) of parameters to a url. 
   */
-  protected static function paramsToUrl($resource, $params, $id = null)
+  protected static function parametersToUrl($resource, $params, $id = null, 
+                                            $extension = 'xml')
   {
     $result = Vuzit_Service::getServiceUrl() . "/" . $resource;
     if($id != null) {
       $result .= "/" . $id;
     }
-    $result .= ".xml?";
+    $result .= "." . $extension . "?";
 
     foreach ($params as $key => &$val) {
       $result .= ($key . '=' . rawurlencode($val) . '&');
@@ -42,7 +43,10 @@ class Vuzit_Base
   /*
     Returns the default HTTP post parameters array.  
   */
-  protected static function postParams($method, $params, $id = '')
+  // TODO: Remove the need for these parameters to be passed in so that
+  //       you can just get the parameters from this method.  It saves
+  //       memory and the other classes now obey this convention.  
+  protected static function postParameters($method, $params, $id = '')
   {
     $params['method'] = $method;
     $params['key'] = Vuzit_Service::getPublicKey();

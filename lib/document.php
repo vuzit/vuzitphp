@@ -81,9 +81,9 @@ class Vuzit_Document extends Vuzit_Base
     $method = "destroy";
     $params = array();
 
-    $post_params = self::postParams($method, $params, $webId);
+    $post_params = self::postParameters($method, $params, $webId);
 
-    $url = self::paramsToUrl('documents', $post_params, $webId);
+    $url = self::parametersToUrl('documents', $post_params, $webId);
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
@@ -100,6 +100,20 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
+    Returns a URL that can download the original document (DOC, PPT, etc)
+    or the PDF version. 
+  */
+  public static function downloadUrl($webId, $fileExtension)
+  {
+    $params = array();
+
+    $params = self::postParameters("show", $params, $webId);
+    $result = self::parametersToUrl('documents', $params, $webId, $fileExtension);
+
+    return $result;
+  }
+
+  /*
     Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
   */
   public static function findById($webId)
@@ -107,10 +121,10 @@ class Vuzit_Document extends Vuzit_Base
     $method = "show";
     $params = array();
 
-    $post_params = self::postParams($method, $params, $webId);
+    $post_params = self::postParameters($method, $params, $webId);
 
     $ch = self::curlRequest();
-    $url = self::paramsToUrl('documents', $post_params, $webId);
+    $url = self::parametersToUrl('documents', $post_params, $webId);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 
@@ -172,7 +186,7 @@ class Vuzit_Document extends Vuzit_Base
     $params['secure'] = ($secure) ? '1' : '0';
     $params['upload'] = "@".$file;
 
-    $post_params = self::postParams($method, $params);
+    $post_params = self::postParameters($method, $params);
 
     $ch = self::curlRequest();
     $url = Vuzit_Service::getServiceUrl() . "/documents.xml";

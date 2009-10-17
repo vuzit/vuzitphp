@@ -54,7 +54,7 @@ function header_load($doc = null)
         function initialize()  {
           vuzit.Base.apiKeySet("<?php echo Vuzit_Service::getPublicKey(); ?>"); 
           var options = {signature: '<?php echo rawurlencode($sig); ?>', 
-                         timestamp: '<?php echo $timestamp ?>', ssl: true}
+                         timestamp: '<?php echo $timestamp ?>'}
           var viewer = vuzit.Viewer.fromId("<?php echo $id; ?>", options);
           
           viewer.display(document.getElementById("vuzit_viewer"), { zoom: 1 });
@@ -84,6 +84,10 @@ function load_command()
 {
   $doc = Vuzit_Document::findById(get("id"));
   header_load($doc);
+  $pdf_url = Vuzit_Document::downloadUrl($doc->getId(), "pdf");
+
+  // TODO: Grab the file type and use it to determine the other file 
+  //       to download?  
   ?>
     <h3>
       Document - <?php echo $doc->getID(); ?>
@@ -95,6 +99,7 @@ function load_command()
       <li>Width: <?php echo $doc->getPageWidth(); ?></li>
       <li>Height: <?php echo $doc->getPageHeight(); ?></li>
       <li>File size: <?php echo $doc->getFileSize(); ?></li>
+      <li><a href="<?php echo $pdf_url; ?>">PDF Download</a></li>
     </ul>
 
     <div id="vuzit_viewer" style="width: 650px; height: 500px;"></div>
@@ -140,13 +145,13 @@ function event_command()
   $options = array();
 
   if(get("v") != null) {
-    $options["v"] = get("v");
+    $options["value"] = get("v");
   }
   if(get("e") != null) {
-    $options["e"] = get("e");
+    $options["event"] = get("e");
   }
   if(get("id") != null) {
-    $options["id"] = get("id");
+    $options["web_id"] = get("id");
   }
   if(get("l") != null) {
     $options["limit"] = get("l");

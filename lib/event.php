@@ -105,11 +105,13 @@ class Vuzit_Event extends Vuzit_Base
       $options = array_merge($options_default, $options);
     }
 
-    $web_id = array_key_exists("id", $options) ? $options["id"] : null;
-    $post_params = self::postParams($method, $options, $web_id);
+    $web_id = array_key_exists("web_id", $options) ? $options["web_id"] : null;
+    // rename to postParameters
+    $post_params = self::postParameters($method, $options, $web_id);
 
     $ch = self::curlRequest();
-    $url = self::paramsToUrl("events", $post_params);
+    // rename to parametersToUrl
+    $url = self::parametersToUrl("events", $post_params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
