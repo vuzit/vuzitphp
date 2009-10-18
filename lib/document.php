@@ -116,12 +116,15 @@ class Vuzit_Document extends Vuzit_Base
   /*
     Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
   */
-  public static function findById($webId)
+  public static function findById($webId, $options = null)
   {
     $method = "show";
-    $params = array();
 
-    $post_params = self::postParameters($method, $params, $webId);
+    if($options == null) {
+      $options = array();
+    }
+     
+    $post_params = self::postParameters($method, $options, $webId);
 
     $ch = self::curlRequest();
     $url = self::parametersToUrl('documents', $post_params, $webId);
@@ -172,21 +175,19 @@ class Vuzit_Document extends Vuzit_Base
   /*
      Uploads a file to Vuzit. It throws a <Vuzit_ClientException> on failure. 
   */
-  public static function upload($file, $secure = true, $fileType = null)
+  public static function upload($file, $options = null)
   {
     $method = "create";
+    if($options == null) {
+      $options = array();
+    }
 
     if(!file_exists($file)) {
       throw new Vuzit_ClientException("Cannot find file at path: $file");
     }
+    $options['upload'] = "@".$file;
 
-    if($fileType != null) {
-      $params['file_type'] = $fileType;
-    }
-    $params['secure'] = ($secure) ? '1' : '0';
-    $params['upload'] = "@".$file;
-
-    $post_params = self::postParameters($method, $params);
+    $post_params = self::postParameters($method, $options);
 
     $ch = self::curlRequest();
     $url = Vuzit_Service::getServiceUrl() . "/documents.xml";

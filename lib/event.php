@@ -90,8 +90,6 @@ class Vuzit_Event extends Vuzit_Base
   public static function findAll($webId, $options = null)
   {
     $method = "show";
-    // This will be removed soon
-    $options["m"] = 'find';
 
     if(!$webId) {
       throw new Vuzit_ClientException("No webId parameter specified");

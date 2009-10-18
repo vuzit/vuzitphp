@@ -1,8 +1,16 @@
 <?php
 require_once '../lib/vuzit.php';
 require_once 'geo_location.php';
+require_once 'browser_info.php';
 
 // GENERAL FUNCTIONS
+
+// Returns the domain for use with the Javascript API global variables.  
+function domain()
+{
+  $url = Vuzit_Service::getServiceUrl();
+  return substr($url, 7, strlen($url) - 7);
+}
 
 // Returns the parameter from the _GET array or null if it isn't present.
 function get($key)
@@ -46,13 +54,17 @@ function header_load($doc = null)
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <title>Vuzit <?php echo get("c") ?> Command Example</title>
-      <link href="http://vuzit.com/stylesheets/Vuzit-2.8.css" rel="Stylesheet" type="text/css" />
-      <script src="http://vuzit.com/javascripts/Vuzit-2.8.js" type="text/javascript"></script>
-
+      <link href="<?php echo Vuzit_Service::getServiceUrl(); ?>/stylesheets/Vuzit-2.8.css" 
+            rel="Stylesheet" type="text/css" />
+      <script src="<?php echo Vuzit_Service::getServiceUrl(); ?>/javascripts/Vuzit-2.8.js" 
+              type="text/javascript"></script>
       <script type="text/javascript">
         // Called when the page is loaded.  
         function initialize()  {
           vuzit.Base.apiKeySet("<?php echo Vuzit_Service::getPublicKey(); ?>"); 
+          vuzit.Base.webServerSet({ host: '<?php echo domain(); ?>', port: '80' });
+          vuzit.Base.imageServerSet({ host: '<?php echo domain(); ?>', port: '80' });
+
           var options = {signature: '<?php echo rawurlencode($sig); ?>', 
                          timestamp: '<?php echo $timestamp ?>'}
           var viewer = vuzit.Viewer.fromId("<?php echo $id; ?>", options);
@@ -82,7 +94,12 @@ function footer_load()
 // Runs the load command
 function load_command()
 {
-  $doc = Vuzit_Document::findById(get("id"));
+  $options = array();
+  if(get("p") != null) {
+    $options["included_pages"] = get("p");
+  }
+
+  $doc = Vuzit_Document::findById(get("id"), $options);
   header_load($doc);
   $pdf_url = Vuzit_Document::downloadUrl($doc->getId(), "pdf");
 
@@ -127,7 +144,15 @@ function delete_command()
 // Runs the upload command
 function upload_command()
 {
-  $doc = Vuzit_Document::upload(get("path"));
+  $options = array();
+  if(get("p") != null) {
+    $options["download_pdf"] = get("p");
+  }
+  if(get("d") != null) {
+    $options["download_document"] = get("d");
+  }
+
+  $doc = Vuzit_Document::upload(get("path"), $options);
   header_load($doc);
   ?>
     <h3>
@@ -174,19 +199,21 @@ function event_load_csv($list, $fileName = "events.csv")
 {
   $csv = '';
 
-  $csv .= csv_line(array("web_id", "event", "page", "requested_at", "value", 
-                         "remote_host", "referer", "user_agent", "zoom"));
+  $csv .= csv_line(array("web_id", "requested_at", "duration", "event", 
+                         "page", "value", "remote_host", "referer", 
+                         "user_agent"));
   foreach($list as $event)
   {
+    $browser = new BrowserInfo($event->getUserAgent());
     $fields = array($event->getWebId(),
+                    date("m/d/y H:i", $event->getRequestedAt()),
+                    $event->getDuration(),
                     $event->getEvent(),
                     $event->getPage(),
-                    date("m/d/y H:i", $event->getRequestedAt()),
                     $event->getValue(),
                     $event->getRemoteHost(),
                     $event->getReferer(),
-                    $event->getUserAgent(),
-                    $event->getZoom()
+                    $browser->getName() . " " . $browser->getVersion()
                    );
     $csv .= csv_line($fields);
   }
@@ -214,16 +241,23 @@ function event_load_html($list)
     $item = $list[$i];
     $event--;
     $host = $item->getRemoteHost();
+    $browser = new BrowserInfo($item->getUserAgent());
     ?>
       <li>
-        [<?php echo $item->getEvent(); ?>] on page <?php echo $item->getPage(); ?> 
-        for <?php echo $item->getDuration(); ?> seconds 
-        at <?php echo date("Y-d-m H:i:s", $item->getRequestedAt()); ?> 
-        (value: <?php echo $item->getValue(); ?>) - 
-        <a href="<?php echo $item->getReferer(); ?>">Referring page</a> - 
-        Remote host: 
-        <a href="location.php?ip=<?php echo $host; ?>"><?php echo $host; ?></a>
-        - User Agent: <?php echo substr($item->getUserAgent(), 0, 5); ?>...
+        <?php 
+          echo "[" . date("Y-d-m H:i:s", $item->getRequestedAt()); 
+
+          if($item->getEvent() == "page_view") {
+            echo " (" . $item->getDuration() . " s)";
+          }
+          echo "] ";
+          echo '"' . $item->getEvent() . '"';
+          echo " on page ".  $item->getPage(); 
+          echo " (value: " . $item->getValue() .  ")";
+          echo ' - <a href="' . $item->getReferer() . '">URL</a> - ';
+          echo ' Remote host: <a href="location.php?ip=' . $host . '">' . $host . "</a> - ";
+          echo $browser->getName() . " " . $browser->getVersion();
+          ?>
       </li>
     <?php
   } 
