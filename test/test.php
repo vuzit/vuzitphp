@@ -44,7 +44,7 @@ function header_load($doc = null)
   {
     $timestamp = time();
     $id = $doc->getId();
-    $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp);
+    $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp, get("p"));
     $onload = "initialize()";
   }
 ?>
@@ -54,9 +54,9 @@ function header_load($doc = null)
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
       <title>Vuzit <?php echo get("c") ?> Command Example</title>
-      <link href="<?php echo Vuzit_Service::getServiceUrl(); ?>/stylesheets/Vuzit-2.8.css" 
+      <link href="<?php echo Vuzit_Service::getServiceUrl(); ?>/stylesheets/Vuzit-2.9.css" 
             rel="Stylesheet" type="text/css" />
-      <script src="<?php echo Vuzit_Service::getServiceUrl(); ?>/javascripts/Vuzit-2.8.js" 
+      <script src="<?php echo Vuzit_Service::getServiceUrl(); ?>/javascripts/Vuzit-2.9.js" 
               type="text/javascript"></script>
       <script type="text/javascript">
         // Called when the page is loaded.  
@@ -65,8 +65,11 @@ function header_load($doc = null)
           vuzit.Base.webServerSet({ host: '<?php echo domain(); ?>', port: '80' });
           vuzit.Base.imageServerSet({ host: '<?php echo domain(); ?>', port: '80' });
 
-          var options = {signature: '<?php echo rawurlencode($sig); ?>', 
-                         timestamp: '<?php echo $timestamp ?>'}
+          var options = { signature: '<?php echo rawurlencode($sig); ?>', 
+                          <?php if(get("p") != null) { ?>
+                          includedPages: '<?php echo get("p"); ?>', 
+                          <?php } ?>
+                          timestamp: '<?php echo $timestamp ?>'}
           var viewer = vuzit.Viewer.fromId("<?php echo $id; ?>", options);
           
           viewer.display(document.getElementById("vuzit_viewer"), { zoom: 1 });
@@ -89,6 +92,23 @@ function footer_load()
 <?php
 }
 
+// Prints out an array for things like options.  
+function printArray($list)
+{
+  if(count($list) < 1) {
+    return '';
+  }
+
+  $result = 'Array:';
+  $result .= '<ul>';
+  foreach ($list as $key => &$value) {
+    $result .= '<li>' . $key . ' = ' . $value . '</li>';
+  }
+  $result .= '</ul>';
+
+  return $result;
+}
+
 // COMMAND FUNCTIONS
 
 // Runs the load command
@@ -109,6 +129,8 @@ function load_command()
     <h3>
       Document - <?php echo $doc->getID(); ?>
     </h3>
+    <?php echo printArray($options); ?>
+    <p>Results:</p>
     <ul>
       <li>Title: <?php echo $doc->getTitle(); ?></li>
       <li>Subject: <?php echo $doc->getSubject(); ?></li>
@@ -116,6 +138,7 @@ function load_command()
       <li>Width: <?php echo $doc->getPageWidth(); ?></li>
       <li>Height: <?php echo $doc->getPageHeight(); ?></li>
       <li>File size: <?php echo $doc->getFileSize(); ?></li>
+      <li>Status: <?php echo $doc->getStatus(); ?></li>
       <li><a href="<?php echo $pdf_url; ?>">PDF Download</a></li>
     </ul>
 
@@ -136,7 +159,8 @@ function delete_command()
   }
   catch(Vuzit_ClientException $ex)
   {
-    echo "Delete of " . $id . " failed with code [" . $ex->getCode() . "], message: " . $ex->getMessage();
+    echo "Delete of " . $id . " failed with code [" . $ex->getCode() . 
+         "], message: " . $ex->getMessage();
   }
   footer_load();
 }
@@ -151,6 +175,9 @@ function upload_command()
   if(get("d") != null) {
     $options["download_document"] = get("d");
   }
+  if(get("s") != null) {
+    $options["secure"] = get("s");
+  }
 
   $doc = Vuzit_Document::upload(get("path"), $options);
   header_load($doc);
@@ -158,6 +185,7 @@ function upload_command()
     <h3>
       Document - <?php echo $doc->getID(); ?>
     </h3>
+    <?php echo printArray($options); ?>
 
     <div id="vuzit_viewer" style="width: 650px; height: 500px;"></div>
   <?php
@@ -188,7 +216,7 @@ function event_command()
       break;
     default:
       header_load();
-      event_load_html($list);
+      event_load_html($list, $options);
       footer_load();
       break;
   }
@@ -224,7 +252,7 @@ function event_load_csv($list, $fileName = "events.csv")
 }
 
 // Loads the output of the event list as HTML.  
-function event_load_html($list)
+function event_load_html($list, $options)
 {
   ?>
   <h3>
@@ -233,6 +261,8 @@ function event_load_html($list)
   <p>
     Total events: <?php echo count($list); ?>
   </p>
+  <?php echo printArray($options); ?>
+  <p>Results:</p>
   <ol>
   <?
   $event = count($list);
@@ -284,6 +314,7 @@ if($service_url != null) {
 
 Vuzit_Service::setPublicKey($public_key);
 Vuzit_Service::setPrivateKey($private_key);
+Vuzit_Service::setUserAgent("Vuzit Test Suite");
 
 // Grab the command and execute
 switch(get("c"))

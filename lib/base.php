@@ -22,11 +22,44 @@ class Vuzit_Base
   }
 
   /*
+    Cleans the parameters.  
+   */
+  protected static function parametersClean($parameters)
+  {
+    $result = array();
+
+    foreach ($parameters as $key => &$val)
+    {
+      // Convert true/false to "1" and "0".  
+      if(is_bool($val))
+      {
+        $val = $val ? "1" : "0";
+      }
+      else
+      {
+        // Remove empty values
+        if(!empty($val)) {
+          // Handle file uploads via a HTTP post operation
+          if($key != 'upload' && substr($val, 0, 1) == "@") {
+            $val = chr(32).$val;
+          }
+        }
+      }
+
+      $result[$key] = $val;
+    }
+
+    return $result;
+  }
+
+  /*
     Changes an array (hash table) of parameters to a url. 
   */
   protected static function parametersToUrl($resource, $params, $id = null, 
                                             $extension = 'xml')
   {
+    $params = self::parametersClean($params);
+
     $result = Vuzit_Service::getServiceUrl() . "/" . $resource;
     if($id != null) {
       $result .= "/" . $id;
@@ -48,32 +81,27 @@ class Vuzit_Base
   //       memory and the other classes now obey this convention.  
   protected static function postParameters($method, $params, $id = '')
   {
+    if($params == null) {
+      $params = array();
+    }
+
     $params['method'] = $method;
     $params['key'] = Vuzit_Service::getPublicKey();
 
+    // Signature variables
     $timestamp = time();
-    $sig = Vuzit_Service::signature($method, $id, $timestamp);
-    $params['signature'] = $sig;
     $params['timestamp'] = sprintf("%d", $timestamp);
-
-    $result = array();
-    foreach ($params as $key => &$val) {
-      if(!empty($val)) {
-        if (is_array($val)) {
-          $val = implode(',', $val);
-        }
-
-        if($key != 'upload' && substr($val, 0, 1) == "@"){
-          $val = chr(32).$val;
-        }
-        // TODO: If is_bool && $val == true then turn to "1"
-        //       If is_bool && $val == false then turn to "0"
-
-        $result[$key] = $val;
-      }
+    $pages = '';
+    if(array_key_exists("included_pages", $params)) {
+      $pages = $params["included_pages"];
     }
+    $label = '';
 
-    return $result;
+    // Create the signature
+    $sig = Vuzit_Service::signature($method, $id, $timestamp, $pages, $label);
+    $params['signature'] = $sig;
+
+    return $params;
   }
 }
 ?>

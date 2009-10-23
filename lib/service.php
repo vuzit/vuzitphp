@@ -7,8 +7,8 @@ class Vuzit_Service
   private static $publicKey = '';
   private static $privateKey = '';
   private static $serviceUrl = 'http://vuzit.com';
-  private static $productName = "VuzitPHP Library 1.2.0";
-  private static $userAgent = "VuzitPHP Library 1.2.0";
+  private static $productName = "VuzitPHP Library 2.0.0";
+  private static $userAgent = "VuzitPHP Library 2.0.0";
 
   // Public static getter and setter methods
 
@@ -51,6 +51,10 @@ class Vuzit_Service
     Sets service URL. 
   */
   public static function setServiceUrl($url) {
+    $url = trim($url);
+    if(substr($url, -1) == '/') {
+      throw new Exception("Trailing slashes (/) in service URLs are invalid");
+    }
     self::$serviceUrl = $url;
   }
 
@@ -65,7 +69,7 @@ class Vuzit_Service
     Sets the user agent. 
   */
   public static function setUserAgent($agent) {
-    self::$userAgent = (self::$agent + " (" + self::$productName + ")");
+    self::$userAgent = ($agent + " (" + self::$productName + ")");
   }
 
   // Public static methods
@@ -75,12 +79,13 @@ class Vuzit_Service
     with the Vuzit Javascript API then the value must be encoded with the 
     PHP rawurlencode function.  See the Wiki example for more information:
   */
-  public static function signature($service, $id = '', $time = null)
+  public static function signature($service, $id = '', $time = null, 
+                                   $pages = '', $label = '')
   {
     $result = null;
 
     $time = ($time == null) ? time() : $time;
-    $msg = $service . $id . self::getPublicKey() . $time;
+    $msg = $service . $id . self::getPublicKey() . $time . $pages . $label;
     $hmac = self::hmac_sha1(self::getPrivateKey(), $msg);
 
     return base64_encode($hmac);

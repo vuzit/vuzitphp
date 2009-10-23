@@ -19,6 +19,7 @@ class Vuzit_Document extends Vuzit_Base
     $this->pageWidth = -1;
     $this->pageHeight = -1;
     $this->fileSize = -1;
+    $this->status = -1;
   }
 
   /*
@@ -26,6 +27,13 @@ class Vuzit_Document extends Vuzit_Base
   */
   public function getId() {
     return $this->id;
+  }
+
+  /*
+    Returns the document status.  
+  */
+  public function getStatus() {
+    return $this->status;
   }
 
   /*
@@ -44,9 +52,6 @@ class Vuzit_Document extends Vuzit_Base
 
   /*
     Returns the document page count.  
-
-  Returns:
-    int
   */
   public function getPageCount() {
     return $this->pageCount;
@@ -78,12 +83,9 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function destroy($webId)
   {
-    $method = "destroy";
-    $params = array();
+    $params = self::postParameters("destroy", null, $webId);
 
-    $post_params = self::postParameters($method, $params, $webId);
-
-    $url = self::parametersToUrl('documents', $post_params, $webId);
+    $url = self::parametersToUrl('documents', $params, $webId);
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
@@ -118,16 +120,10 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function findById($webId, $options = null)
   {
-    $method = "show";
-
-    if($options == null) {
-      $options = array();
-    }
-     
-    $post_params = self::postParameters($method, $options, $webId);
+    $params = self::postParameters("show", $options, $webId);
 
     $ch = self::curlRequest();
-    $url = self::parametersToUrl('documents', $post_params, $webId);
+    $url = self::parametersToUrl('documents', $params, $webId);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 
@@ -167,6 +163,7 @@ class Vuzit_Document extends Vuzit_Base
       $result->pageWidth = (int)$xml->width;
       $result->pageHeight = (int)$xml->height;
       $result->fileSize = (int)$xml->file_size;
+      $result->status = (int)$xml->status;
     }
 
     return $result;
@@ -177,24 +174,19 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function upload($file, $options = null)
   {
-    $method = "create";
-    if($options == null) {
-      $options = array();
-    }
-
+    $params = self::postParameters("create", $options);
     if(!file_exists($file)) {
       throw new Vuzit_ClientException("Cannot find file at path: $file");
     }
-    $options['upload'] = "@".$file;
-
-    $post_params = self::postParameters($method, $options);
+    $params['upload'] = "@".$file;
+    $params = self::parametersClean($params);
 
     $ch = self::curlRequest();
     $url = Vuzit_Service::getServiceUrl() . "/documents.xml";
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_params);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
