@@ -89,17 +89,15 @@ class Vuzit_Event extends Vuzit_Base
   */
   public static function findAll($webId, $options = null)
   {
-    $method = "show";
-
     if(!$webId) {
       throw new Vuzit_ClientException("No webId parameter specified");
     }
 
-    $post_params = self::postParameters($method, $options, $webId);
-    $post_params["web_id"] = $webId;
+    $params = self::postParameters("show", $options, $webId);
+    $params["web_id"] = $webId;
 
     $ch = self::curlRequest();
-    $url = self::parametersToUrl("events", $post_params);
+    $url = self::parametersToUrl("events", $params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response

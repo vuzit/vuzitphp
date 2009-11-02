@@ -107,9 +107,7 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function downloadUrl($webId, $fileExtension)
   {
-    $params = array();
-
-    $params = self::postParameters("show", $params, $webId);
+    $params = self::postParameters("show", null, $webId);
     $result = self::parametersToUrl('documents', $params, $webId, $fileExtension);
 
     return $result;

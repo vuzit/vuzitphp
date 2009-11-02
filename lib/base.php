@@ -17,6 +17,9 @@ class Vuzit_Base
       curl_setopt($result, CURLOPT_SSL_VERIFYHOST, false);
     }
     curl_setopt($result, CURLOPT_USERAGENT, Vuzit_Service::getUserAgent()); 
+    // 60 second timeout to prevent timeouts with large requests,
+    // a busy server or IIS delays
+    curl_setopt($result, CURLOPT_CONNECTTIMEOUT, 60); 
 
     return $result;
   }
