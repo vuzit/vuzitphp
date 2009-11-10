@@ -275,17 +275,21 @@ function event_load_html($list, $options)
     ?>
       <li>
         <?php 
-          echo "[" . date("Y-d-m H:i:s", $item->getRequestedAt()); 
+          echo "[" . date("Y-m-d H:i:s", $item->getRequestedAt()) . "] ";
 
           if($item->getEvent() == "page_view") {
-            echo " (" . $item->getDuration() . " s)";
+            echo $item->getDuration() . "s - ";
           }
-          echo "] ";
-          echo '"' . $item->getEvent() . '"';
-          echo " on page ".  $item->getPage(); 
-          echo " (value: " . $item->getValue() .  ")";
+          echo $item->getEvent();
+
+          if($item->getPage() != 0) {
+            echo ", p".  $item->getPage(); 
+          }
+          if($item->getValue() != null) {
+            echo " (" . $item->getValue() .  ")";
+          }
           echo ' - <a href="' . $item->getReferer() . '">URL</a> - ';
-          echo ' Remote host: <a href="location.php?ip=' . $host . '">' . $host . "</a> - ";
+          echo ' <a href="location.php?ip=' . $host . '">' . $host . "</a> - ";
           echo $browser->getName() . " " . $browser->getVersion();
           ?>
       </li>
