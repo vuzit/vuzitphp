@@ -197,8 +197,8 @@ function event_command()
 {
   $options = array();
 
-  if(get("v") != null) {
-    $options["value"] = get("v");
+  if(get("cu") != null) {
+    $options["custom"] = get("cu");
   }
   if(get("e") != null) {
     $options["event"] = get("e");
@@ -228,7 +228,7 @@ function event_load_csv($list, $fileName = "events.csv")
   $csv = '';
 
   $csv .= csv_line(array("web_id", "requested_at", "duration", "event", 
-                         "page", "value", "remote_host", "referer", 
+                         "page", "custom", "remote_host", "referer", 
                          "user_agent"));
   foreach($list as $event)
   {
@@ -238,7 +238,7 @@ function event_load_csv($list, $fileName = "events.csv")
                     $event->getDuration(),
                     $event->getEvent(),
                     $event->getPage(),
-                    $event->getValue(),
+                    $event->getCustom(),
                     $event->getRemoteHost(),
                     $event->getReferer(),
                     $browser->getName() . " " . $browser->getVersion()
@@ -285,8 +285,8 @@ function event_load_html($list, $options)
           if($item->getPage() != 0) {
             echo ", p".  $item->getPage(); 
           }
-          if($item->getValue() != null) {
-            echo " (" . $item->getValue() .  ")";
+          if($item->getCustom() != null) {
+            echo " (" . $item->getCustom() .  ")";
           }
           echo ' - <a href="' . $item->getReferer() . '">URL</a> - ';
           echo ' <a href="location.php?ip=' . $host . '">' . $host . "</a> - ";

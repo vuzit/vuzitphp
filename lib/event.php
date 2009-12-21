@@ -15,7 +15,7 @@ class Vuzit_Event extends Vuzit_Base
     $this->remoteHost = null;
     $this->referer = null;
     $this->userAgent = null;
-    $this->valueType = null;
+    $this->custom = null;
     $this->requestedAt = null;
     $this->page = -1;
     $this->duration = -1;
@@ -64,10 +64,10 @@ class Vuzit_Event extends Vuzit_Base
   }
 
   /*
-    Returns the value type.  
+    Returns the custom type.  
   */
-  public function getValue() {
-    return $this->valueType;
+  public function getCustom() {
+    return $this->custom;
   }
 
   /*
@@ -134,7 +134,7 @@ class Vuzit_Event extends Vuzit_Base
       $event->remoteHost = (string)$node->remote_host;
       $event->referer = (string)$node->referer;
       $event->userAgent = (string)$node->user_agent;
-      $event->valueType = (string)$node->value;
+      $event->custom = (string)$node->custom;
       $event->requestedAt = (int)$node->requested_at;
       $event->page = $node->page != null ? (int)$node->page : -1;
       $event->duration = $node->duration != null ? (int)$node->duration : -1;
