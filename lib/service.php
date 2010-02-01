@@ -7,8 +7,8 @@ class Vuzit_Service
   private static $publicKey = '';
   private static $privateKey = '';
   private static $serviceUrl = 'http://vuzit.com';
-  private static $productName = "VuzitPHP Library 2.0.0";
-  private static $userAgent = "VuzitPHP Library 2.0.0";
+  private static $productName = "VuzitPHP Library 2.1.0";
+  private static $userAgent = "VuzitPHP Library 2.1.0";
 
   // Public static getter and setter methods
 
@@ -80,12 +80,13 @@ class Vuzit_Service
     PHP rawurlencode function.  See the Wiki example for more information:
   */
   public static function signature($service, $id = '', $time = null, 
-                                   $pages = '', $label = '')
+                                   $pages = '', $label = '', $query = '')
   {
     $result = null;
 
     $time = ($time == null) ? time() : $time;
-    $msg = $service . $id . self::getPublicKey() . $time . $pages . $label;
+    $msg = $service . $id . self::getPublicKey() . $time . $pages . 
+           $label . $query;
     $hmac = self::hmac_sha1(self::getPrivateKey(), $msg);
 
     return base64_encode($hmac);
@@ -93,9 +94,9 @@ class Vuzit_Service
 
   // Private static methods
 
-  /**
-     Returns the HMAC SHA1 value. 
-   */
+  /*
+    Returns the HMAC SHA1 value. 
+  */
   private static function hmac_sha1($key, $s)
   {
     return pack("H*", sha1((str_pad($key, 64, chr(0x00)) ^ 

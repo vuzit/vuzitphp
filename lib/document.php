@@ -20,6 +20,7 @@ class Vuzit_Document extends Vuzit_Base
     $this->pageHeight = -1;
     $this->fileSize = -1;
     $this->status = -1;
+    $this->excerpt = null;
   }
 
   /*
@@ -27,6 +28,13 @@ class Vuzit_Document extends Vuzit_Base
   */
   public function getId() {
     return $this->id;
+  }
+
+  /*
+    Returns the document excerpt if present.  
+  */
+  public function getExcerpt() {
+    return $this->excerpt;
   }
 
   /*
@@ -114,6 +122,45 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
+    Loads up multiple documents.  
+  */
+  public static function findAll($options = null)
+  {
+    $result = array();
+    $params = self::postParameters("index", $options);
+
+    $ch = self::curlRequest();
+    $url = self::parametersToUrl('documents', $params);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
+
+    $xml_string = curl_exec($ch);
+    $info = curl_getinfo($ch);
+
+    if(!$xml_string) {
+      throw new Vuzit_ClientException('CURL load failed: "' . curl_error($ch) . '"');
+    }
+
+    // Prevent the warnings if the XML is malformed
+    $xml = @simplexml_load_string($xml_string); 
+    curl_close($ch);
+
+    if(!$xml) {
+      throw new Vuzit_ClientException("Error loading XML response");
+    }
+    if($xml->code) {
+      throw new Vuzit_ClientException($xml->msg, (int)$xml->code);
+    }
+
+    for($i = 0; $i < count($xml->document); $i++)
+    {
+      $result[$i] = self::xmlToDocument($xml->document[$i]);
+    }
+
+    return $result;
+  }
+
+  /*
     Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
   */
   public static function findById($webId, $options = null)
@@ -150,25 +197,13 @@ class Vuzit_Document extends Vuzit_Base
     if(!$xml->web_id) {
       throw new Vuzit_ClientException("Unknown error occurred");
     }
-
-    $result = new Vuzit_Document();
-    $result->id = (string)$xml->web_id; 
-
-    if($xml->title) {
-      $result->title = (string)$xml->title;
-      $result->subject = (string)$xml->subject;
-      $result->pageCount = (int)$xml->page_count;
-      $result->pageWidth = (int)$xml->width;
-      $result->pageHeight = (int)$xml->height;
-      $result->fileSize = (int)$xml->file_size;
-      $result->status = (int)$xml->status;
-    }
+    $result = self::xmlToDocument($xml);
 
     return $result;
   }
 
   /*
-     Uploads a file to Vuzit. It throws a <Vuzit_ClientException> on failure. 
+    Uploads a file to Vuzit. It throws a <Vuzit_ClientException> on failure. 
   */
   public static function upload($file, $options = null)
   {
@@ -185,6 +220,8 @@ class Vuzit_Document extends Vuzit_Base
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+    // Setting the timeout to 5 minutes in case the file is large
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, (5 * 60 * 1000)); 
 
     $xml_string = curl_exec($ch);
     if(!$xml_string) {
@@ -216,6 +253,30 @@ class Vuzit_Document extends Vuzit_Base
 
     $result = new Vuzit_Document();
     $result->id = (string)$xml->web_id; 
+
+    return $result;
+  }
+
+  // Private static methods
+
+  /*
+    Converts an XML array to a Document instance.
+  */
+  private static function xmlToDocument($xml)
+  {
+    $result = new Vuzit_Document();
+    $result->id = (string)$xml->web_id; 
+
+    if($xml->page_count) {
+      $result->title = (string)$xml->title;
+      $result->subject = (string)$xml->subject;
+      $result->pageCount = (int)$xml->page_count;
+      $result->pageWidth = (int)$xml->width;
+      $result->pageHeight = (int)$xml->height;
+      $result->fileSize = (int)$xml->file_size;
+      $result->status = (int)$xml->status;
+      $result->excerpt = ($xml->excerpt) ? ($xml->excerpt) : null;
+    }
 
     return $result;
   }

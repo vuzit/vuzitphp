@@ -79,9 +79,6 @@ class Vuzit_Base
   /*
     Returns the default HTTP post parameters array.  
   */
-  // TODO: Remove the need for these parameters to be passed in so that
-  //       you can just get the parameters from this method.  It saves
-  //       memory and the other classes now obey this convention.  
   protected static function postParameters($method, $params, $id = '')
   {
     if($params == null) {
@@ -98,10 +95,16 @@ class Vuzit_Base
     if(array_key_exists("included_pages", $params)) {
       $pages = $params["included_pages"];
     }
+    $query = '';
+    if(array_key_exists("query", $params)) {
+      $query = $params["query"];
+    }
+    // TODO: Have the label actually usable
     $label = '';
 
     // Create the signature
-    $sig = Vuzit_Service::signature($method, $id, $timestamp, $pages, $label);
+    $sig = Vuzit_Service::signature($method, $id, $timestamp, $pages, 
+                                    $label, $query);
     $params['signature'] = $sig;
 
     return $params;

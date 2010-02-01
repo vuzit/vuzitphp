@@ -40,12 +40,17 @@ function header_load($doc = null)
 {
   $id = '';
   $onload = '';
-  if($doc != null) 
-  {
+  if($doc != null) {
     $timestamp = time();
     $id = $doc->getId();
     $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp, get("p"));
     $onload = "initialize()";
+  }
+  else {
+    $timestamp = '';
+    $id = '';
+    $sig = '';
+    $onload = '';
   }
 ?>
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -298,6 +303,51 @@ function event_load_html($list, $options)
   echo "</ol>";
 }
 
+// Runs the search command
+function search_command()
+{
+  $options = array();
+  $options["output"] = "summary";
+
+  if(get("q") != null) {
+    $options["query"] = get("q");
+  }
+  if(get("l") != null) {
+    $options["limit"] = get("l");
+  }
+  if(get("o") != null) {
+    $options["offset"] = get("o");
+  }
+
+  $docs = Vuzit_Document::findAll($options);
+  header_load();
+
+  echo count($docs) . " documents found";
+
+  for($i = 0; $i < count($docs); $i++)
+  {
+    $doc = $docs[$i];
+  ?>
+    <h3>
+      <?php echo $i + 1; ?>. Document - <?php echo $doc->getID(); ?>
+    </h3>
+    <?php echo printArray($options); ?>
+    <p>Results:</p>
+    <ul>
+      <li>Title: <?php echo $doc->getTitle(); ?></li>
+      <li>Subject: <?php echo $doc->getSubject(); ?></li>
+      <li>Page count: <?php echo $doc->getPageCount(); ?></li>
+      <li>Width: <?php echo $doc->getPageWidth(); ?></li>
+      <li>Height: <?php echo $doc->getPageHeight(); ?></li>
+      <li>File size: <?php echo $doc->getFileSize(); ?></li>
+      <li>Status: <?php echo $doc->getStatus(); ?></li>
+      <li>Excerpt: <?php echo $doc->getExcerpt(); ?>...</li>
+    </ul>
+  <?php
+  }
+  footer_load();
+}
+
 // MAIN EXECUTION
 
 // Load and check the keys
@@ -334,6 +384,9 @@ switch(get("c"))
     break;
   case "event":
     event_command();
+    break;
+  case "search":
+    search_command();
     break;
 }
 ?>
