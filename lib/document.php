@@ -161,9 +161,17 @@ class Vuzit_Document extends Vuzit_Base
   }
 
   /*
-    Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
+    Finds a document by the ID.  Deprecated.  
   */
   public static function findById($webId, $options = null)
+  {
+    return self::find($webId, $options);
+  }
+
+  /*
+    Finds a document by the ID.  It throws a <Vuzit_ClientException> on failure. 
+  */
+  public static function find($webId, $options = null)
   {
     $params = self::postParameters("show", $options, $webId);
 

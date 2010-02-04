@@ -84,27 +84,14 @@ class Vuzit_Base
     if($params == null) {
       $params = array();
     }
-
     $params['method'] = $method;
     $params['key'] = Vuzit_Service::getPublicKey();
 
     // Signature variables
     $timestamp = time();
     $params['timestamp'] = sprintf("%d", $timestamp);
-    $pages = '';
-    if(array_key_exists("included_pages", $params)) {
-      $pages = $params["included_pages"];
-    }
-    $query = '';
-    if(array_key_exists("query", $params)) {
-      $query = $params["query"];
-    }
-    // TODO: Have the label actually usable
-    $label = '';
 
-    // Create the signature
-    $sig = Vuzit_Service::signature($method, $id, $timestamp, $pages, 
-                                    $label, $query);
+    $sig = Vuzit_Service::signature($method, $id, $timestamp, $params);
     $params['signature'] = $sig;
 
     return $params;

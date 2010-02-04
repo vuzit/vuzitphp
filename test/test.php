@@ -43,7 +43,14 @@ function header_load($doc = null)
   if($doc != null) {
     $timestamp = time();
     $id = $doc->getId();
-    $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp, get("p"));
+    $options = array();
+    if(get("p") != null) {
+      $options["included_pages"] = get("p");
+    }
+    if(get("w") != null) {
+      $options["watermark"] = get("w");
+    }
+    $sig = Vuzit_Service::signature("show", $doc->getId(), $timestamp, $options);
     $onload = "initialize()";
   }
   else {
@@ -74,6 +81,9 @@ function header_load($doc = null)
                           <?php if(get("p") != null) { ?>
                           includedPages: '<?php echo get("p"); ?>', 
                           <?php } ?>
+                          <?php if(get("w") != null) { ?>
+                          watermark: '<?php echo get("w"); ?>', 
+                          <?php } ?>
                           timestamp: '<?php echo $timestamp ?>'}
           var viewer = vuzit.Viewer.fromId("<?php echo $id; ?>", options);
           
@@ -92,6 +102,7 @@ function header_load($doc = null)
 function footer_load()
 {
 ?>
+    <a href="index.html">&raquo; Go to test page</a>
     </body>
   </html>
 <?php
@@ -123,8 +134,11 @@ function load_command()
   if(get("p") != null) {
     $options["included_pages"] = get("p");
   }
+  if(get("w") != null) {
+    $options["watermark"] = get("w");
+  }
 
-  $doc = Vuzit_Document::findById(get("id"), $options);
+  $doc = Vuzit_Document::find(get("id"), $options);
   header_load($doc);
   $pdf_url = Vuzit_Document::downloadUrl($doc->getId(), "pdf");
 

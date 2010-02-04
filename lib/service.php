@@ -77,16 +77,22 @@ class Vuzit_Service
   /*
     Returns The signature string.  NOTE: If you are going to use this 
     with the Vuzit Javascript API then the value must be encoded with the 
-    PHP rawurlencode function.  See the Wiki example for more information:
+    PHP rawurlencode function.  See the Wiki example for more information.
   */
-  public static function signature($service, $id = '', $time = null, 
-                                   $pages = '', $label = '', $query = '')
+  public static function signature($service, $id = '', $time = null, $options = null)
   {
-    $result = null;
-
     $time = ($time == null) ? time() : $time;
-    $msg = $service . $id . self::getPublicKey() . $time . $pages . 
-           $label . $query;
+
+    $msg = $service . $id . self::getPublicKey() . $time;
+    if($options != null) {
+      $options_list = array('included_pages', 'watermark', 'query');
+
+      foreach ($options_list as $item) {
+        if(array_key_exists($item, $options)) {
+          $msg .= $options[$item];
+        }
+      }
+    }
     $hmac = self::hmac_sha1(self::getPrivateKey(), $msg);
 
     return base64_encode($hmac);
