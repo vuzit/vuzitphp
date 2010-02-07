@@ -10,7 +10,7 @@
 This is a library that allows developers to directly access the Vuzit Web 
 Service API through a simple PHP script:
 
-  http://vuzit.com/developer/documents_api
+  http://vuzit.com/developer/web_service_api
 
 Below is a basic upload example:
 

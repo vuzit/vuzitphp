@@ -321,7 +321,6 @@ function event_load_html($list, $options)
 function search_command()
 {
   $options = array();
-  $options["output"] = "summary";
 
   if(get("q") != null) {
     $options["query"] = get("q");

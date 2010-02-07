@@ -25,6 +25,22 @@ class Vuzit_Base
   }
 
   /*
+    Returns the string value of an XML node or null if not set. 
+  */
+  protected static function nodeValue($node)
+  {
+     return (strlen($node) < 1) ? null : (string)$node;
+  }
+
+  /*
+    Returns the integer value of an XML node or -1 if not set. 
+  */
+  protected static function nodeValueInt($node)
+  {
+     return (strlen($node) < 1) ? -1 : (int)$node;
+  }
+
+  /*
     Cleans the parameters.  
    */
   protected static function parametersClean($parameters)

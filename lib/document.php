@@ -128,6 +128,8 @@ class Vuzit_Document extends Vuzit_Base
   {
     $result = array();
     $params = self::postParameters("index", $options);
+    // Default the output to summary so there's more information
+    $params["output"] = "summary";
 
     $ch = self::curlRequest();
     $url = self::parametersToUrl('documents', $params);
@@ -273,18 +275,20 @@ class Vuzit_Document extends Vuzit_Base
   private static function xmlToDocument($xml)
   {
     $result = new Vuzit_Document();
-    $result->id = (string)$xml->web_id; 
 
-    if($xml->page_count) {
-      $result->title = (string)$xml->title;
-      $result->subject = (string)$xml->subject;
-      $result->pageCount = (int)$xml->page_count;
-      $result->pageWidth = (int)$xml->width;
-      $result->pageHeight = (int)$xml->height;
-      $result->fileSize = (int)$xml->file_size;
-      $result->status = (int)$xml->status;
-      $result->excerpt = ($xml->excerpt) ? ($xml->excerpt) : null;
+    $result->id = self::nodeValue($xml->web_id); 
+    if($result->id == null) {
+      throw new Vuzit_ClientException("No web_id found in results");
     }
+
+    $result->title = self::nodeValue($xml->title);
+    $result->subject = self::nodeValue($xml->subject);
+    $result->pageCount = self::nodeValueInt($xml->page_count);
+    $result->pageWidth = self::nodeValueInt($xml->width);
+    $result->pageHeight = self::nodeValueInt($xml->height);
+    $result->fileSize = self::nodeValueInt($xml->file_size);
+    $result->status = self::nodeValueInt($xml->status);
+    $result->excerpt = self::nodeValue($xml->excerpt);
 
     return $result;
   }
