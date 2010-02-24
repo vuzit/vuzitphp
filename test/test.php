@@ -301,7 +301,7 @@ function event_load_html($list, $options)
           }
           echo $item->getEvent();
 
-          if($item->getPage() != 0) {
+          if($item->getPage() != -1) {
             echo ", p".  $item->getPage(); 
           }
           if($item->getCustom() != null) {
@@ -315,6 +315,38 @@ function event_load_html($list, $options)
     <?php
   } 
   echo "</ol>";
+}
+
+// Runs the page text API command
+function page_command()
+{
+  $options = array();
+
+  if(get("l") != null) {
+    $options["limit"] = get("l");
+  }
+  if(get("o") != null) {
+    $options["offset"] = get("o");
+  }
+  if(get("i") != null) {
+    $options["included_pages"] = get("i");
+  }
+
+  $pages = Vuzit_Page::findAll(get("id"), $options);
+  header_load();
+
+  echo printArray($options) . "<br/>";
+  echo count($pages) . " pages in the document";
+
+  for($i = 0; $i < count($pages); $i++)
+  {
+    $page = $pages[$i];
+  ?>
+    <h3>Page #<?php echo $page->getNumber(); ?></h3>
+    <p><?php echo $page->getText(); ?></p>
+  <?php
+  }
+  footer_load();
 }
 
 // Runs the search command
@@ -401,5 +433,10 @@ switch(get("c"))
   case "search":
     search_command();
     break;
+  case "page":
+    page_command();
+    break;
+  default:
+    echo "Unknown command: " . get("c");
 }
 ?>

@@ -7,10 +7,10 @@ class Vuzit_Event extends Vuzit_Base
 {
   /*
     Constructor.  Creates an empty event object.  This is not called directly.  
-    Use finaAll to load an instance. 
+    Use findAll to load an instance. 
   */
   public function __construct() {
-    $this->web_id = -1;
+    $this->webId = -1;
     $this->event = null;
     $this->remoteHost = null;
     $this->referer = null;
@@ -32,7 +32,7 @@ class Vuzit_Event extends Vuzit_Base
     Returns the document web ID.  
   */
   public function getWebId() {
-    return $this->web_id;
+    return $this->webId;
   }
 
   /*
@@ -97,7 +97,7 @@ class Vuzit_Event extends Vuzit_Base
     $params["web_id"] = $webId;
 
     $ch = self::curlRequest();
-    $url = self::parametersToUrl("events", $params);
+    $url = self::parametersToUrl("events.xml", $params);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
@@ -129,15 +129,16 @@ class Vuzit_Event extends Vuzit_Base
     foreach($xml->event as $node)
     {
       $event = new Vuzit_Event();
-      $event->web_id = (string)$node->web_id; 
-      $event->event = (string)$node->event; 
-      $event->remoteHost = (string)$node->remote_host;
-      $event->referer = (string)$node->referer;
-      $event->userAgent = (string)$node->user_agent;
-      $event->custom = (string)$node->custom;
-      $event->requestedAt = (int)$node->requested_at;
-      $event->page = $node->page != null ? (int)$node->page : -1;
-      $event->duration = $node->duration != null ? (int)$node->duration : -1;
+
+      $event->webId = self::nodeValue($node->web_id); 
+      $event->event = self::nodeValue($node->event); 
+      $event->remoteHost = self::nodeValue($node->remote_host);
+      $event->referer = self::nodeValue($node->referer);
+      $event->userAgent = self::nodeValue($node->user_agent);
+      $event->custom = self::nodeValue($node->custom);
+      $event->requestedAt = self::nodeValueInt($node->requested_at);
+      $event->page = self::nodeValueInt($node->page);
+      $event->duration = self::nodeValueInt($node->duration);
 
       $result[] = $event;
     }

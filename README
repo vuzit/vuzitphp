@@ -82,7 +82,7 @@ Find Document Example - how to load a document
   Vuzit_Service::setPublicKey('YOUR_PUBLIC_API_KEY');
   Vuzit_Service::setPrivateKey('YOUR_PRIVATE_API_KEY');
 
-  $doc = Vuzit_Document::findById("DOCUMENT_ID");
+  $doc = Vuzit_Document::find("DOCUMENT_ID");
   echo "Document id: " . $doc->getId();
   echo "Document title: " . $doc->getTitle();
   ?>

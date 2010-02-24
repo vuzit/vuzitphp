@@ -93,7 +93,8 @@ class Vuzit_Document extends Vuzit_Base
   {
     $params = self::postParameters("destroy", null, $webId);
 
-    $url = self::parametersToUrl('documents', $params, $webId);
+    $url = self::parametersToUrl("documents/$webId.xml", $params);
+
     $ch = self::curlRequest();
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // only if expecting response
@@ -116,7 +117,7 @@ class Vuzit_Document extends Vuzit_Base
   public static function downloadUrl($webId, $fileExtension)
   {
     $params = self::postParameters("show", null, $webId);
-    $result = self::parametersToUrl('documents', $params, $webId, $fileExtension);
+    $result = self::parametersToUrl("documents/$webId.$fileExtension", $params);
 
     return $result;
   }
@@ -132,7 +133,8 @@ class Vuzit_Document extends Vuzit_Base
     $params["output"] = "summary";
 
     $ch = self::curlRequest();
-    $url = self::parametersToUrl('documents', $params);
+    $url = self::parametersToUrl("documents.xml", $params);
+
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 
@@ -178,7 +180,9 @@ class Vuzit_Document extends Vuzit_Base
     $params = self::postParameters("show", $options, $webId);
 
     $ch = self::curlRequest();
-    $url = self::parametersToUrl('documents', $params, $webId);
+
+    $url = self::parametersToUrl("documents/$webId.xml", $params);
+
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); // only if expecting response
 

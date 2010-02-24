@@ -7,8 +7,8 @@ class Vuzit_Service
   private static $publicKey = '';
   private static $privateKey = '';
   private static $serviceUrl = 'http://vuzit.com';
-  private static $productName = "VuzitPHP Library 2.1.0";
-  private static $userAgent = "VuzitPHP Library 2.1.0";
+  private static $productName = "VuzitPHP Library 2.2.0";
+  private static $userAgent = "VuzitPHP Library 2.2.0";
 
   // Public static getter and setter methods
 

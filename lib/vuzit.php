@@ -12,4 +12,5 @@ include_once(VUZIT_DIR . "/document.php");
 include_once(VUZIT_DIR . "/event.php");
 include_once(VUZIT_DIR . "/client_exception.php");
 include_once(VUZIT_DIR . "/service.php");
+include_once(VUZIT_DIR . "/page.php");
 ?>

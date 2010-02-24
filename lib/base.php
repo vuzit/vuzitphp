@@ -74,16 +74,11 @@ class Vuzit_Base
   /*
     Changes an array (hash table) of parameters to a url. 
   */
-  protected static function parametersToUrl($resource, $params, $id = null, 
-                                            $extension = 'xml')
+  protected static function parametersToUrl($baseUrl, $params)
   {
     $params = self::parametersClean($params);
 
-    $result = Vuzit_Service::getServiceUrl() . "/" . $resource;
-    if($id != null) {
-      $result .= "/" . $id;
-    }
-    $result .= "." . $extension . "?";
+    $result = Vuzit_Service::getServiceUrl() . '/' . $baseUrl . "?";
 
     foreach ($params as $key => &$val) {
       $result .= ($key . '=' . rawurlencode($val) . '&');
