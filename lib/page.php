@@ -34,7 +34,7 @@ class Vuzit_Page extends Vuzit_Base
   public static function findAll($webId, $options = null)
   {
     if(!$webId) {
-      throw new Vuzit_ClientException("No webId parameter specified");
+      throw new Vuzit_ClientException("webId cannot be null");
     }
 
     $params = self::postParameters("index", $options, $webId);

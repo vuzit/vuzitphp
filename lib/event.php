@@ -10,7 +10,7 @@ class Vuzit_Event extends Vuzit_Base
     Use findAll to load an instance. 
   */
   public function __construct() {
-    $this->webId = -1;
+    $this->webId = null;
     $this->event = null;
     $this->remoteHost = null;
     $this->referer = null;
@@ -90,7 +90,7 @@ class Vuzit_Event extends Vuzit_Base
   public static function findAll($webId, $options = null)
   {
     if(!$webId) {
-      throw new Vuzit_ClientException("No webId parameter specified");
+      throw new Vuzit_ClientException("webId cannot be null");
     }
 
     $params = self::postParameters("show", $options, $webId);

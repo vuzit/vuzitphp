@@ -91,6 +91,9 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function destroy($webId)
   {
+    if($webId == null) {
+      throw new Vuzit_ClientException("webId cannot be null");
+    }
     $params = self::postParameters("destroy", null, $webId);
 
     $url = self::parametersToUrl("documents/$webId.xml", $params);
@@ -116,6 +119,13 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function downloadUrl($webId, $fileExtension)
   {
+    if($webId == null) {
+      throw new Vuzit_ClientException("webId cannot be null");
+    }
+    if($fileExtension == null) {
+      throw new Vuzit_ClientException("fileExtension cannot be null");
+    }
+
     $params = self::postParameters("show", null, $webId);
     $result = self::parametersToUrl("documents/$webId.$fileExtension", $params);
 
@@ -177,6 +187,9 @@ class Vuzit_Document extends Vuzit_Base
   */
   public static function find($webId, $options = null)
   {
+    if($webId == null) {
+      throw new Vuzit_ClientException("webId cannot be null");
+    }
     $params = self::postParameters("show", $options, $webId);
 
     $ch = self::curlRequest();

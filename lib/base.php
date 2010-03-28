@@ -3,7 +3,7 @@
   Base class for Vuzit resources.  To use this class you need to sign up for 
   Vuzit first: http://vuzit.com/signup
 */
-class Vuzit_Base
+abstract class Vuzit_Base
 {
   /*
     Returns a CURL request.  
