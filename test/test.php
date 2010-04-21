@@ -363,10 +363,14 @@ function search_command()
   if(get("o") != null) {
     $options["offset"] = get("o");
   }
+  if(get("O") != null) {
+    $options["output"] = get("O");
+  }
 
   $docs = Vuzit_Document::findAll($options);
   header_load();
 
+  echo printArray($options);
   echo count($docs) . " documents found";
 
   for($i = 0; $i < count($docs); $i++)
@@ -376,18 +380,15 @@ function search_command()
     <h3>
       <?php echo $i + 1; ?>. Document - <?php echo $doc->getID(); ?>
     </h3>
-    <?php echo printArray($options); ?>
+    <?php if($doc->getPageCount() != -1) { ?>
     <p>Results:</p>
     <ul>
       <li>Title: <?php echo $doc->getTitle(); ?></li>
-      <li>Subject: <?php echo $doc->getSubject(); ?></li>
       <li>Page count: <?php echo $doc->getPageCount(); ?></li>
-      <li>Width: <?php echo $doc->getPageWidth(); ?></li>
-      <li>Height: <?php echo $doc->getPageHeight(); ?></li>
       <li>File size: <?php echo $doc->getFileSize(); ?></li>
-      <li>Status: <?php echo $doc->getStatus(); ?></li>
       <li>Excerpt: <?php echo $doc->getExcerpt(); ?>...</li>
     </ul>
+    <?php } ?>
   <?php
   }
   footer_load();
@@ -415,6 +416,7 @@ Vuzit_Service::setPublicKey($public_key);
 Vuzit_Service::setPrivateKey($private_key);
 Vuzit_Service::setUserAgent("Vuzit Test Suite");
 
+$time = time();
 // Grab the command and execute
 switch(get("c"))
 {
@@ -439,4 +441,5 @@ switch(get("c"))
   default:
     echo "Unknown command: " . get("c");
 }
+echo "<br/>Execution time: " . (time() - $time) . " seconds";
 ?>

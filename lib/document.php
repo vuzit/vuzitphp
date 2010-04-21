@@ -139,8 +139,6 @@ class Vuzit_Document extends Vuzit_Base
   {
     $result = array();
     $params = self::postParameters("index", $options);
-    // Default the output to summary so there's more information
-    $params["output"] = "summary";
 
     $ch = self::curlRequest();
     $url = self::parametersToUrl("documents.xml", $params);
